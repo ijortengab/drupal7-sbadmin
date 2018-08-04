@@ -1,0 +1,10 @@
+<?php
+    
+    
+    
+// set bahwa defult front page adalah /front.
+// - saat instalasia module, maka set block user-menu berada pada region header.
+// - set block tersebut sebagai no title
+// - saat instalasia module, maka set block main-menu berada pada region sidebar.
+// - set block tersebut sebagai no title
+

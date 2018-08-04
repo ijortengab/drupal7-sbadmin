@@ -1,0 +1,4 @@
+name = sbadmin2_page_template_01
+core = 7.x
+package = SB Admin 2
+hidden = TRUE

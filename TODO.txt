@@ -1,0 +1,4 @@
+- Buat file sh untuk modify file sbadmin2_helper.module yang mana didalamnya
+  terdapat informasi versi dari jquery. Jadi jika versi jquery diganti menjadi
+  yang terbaru, maka terdapat file sh yang akan otomatis membaca file RESOURCES.txt
+  kemudian menyesuaikan versi jquery yang terdapat pada file *.module.

@@ -1,0 +1,5 @@
+name = SB Admin 2 Helper
+description = Menyediakan berbagai kebutuhan bagi theme SBAdmin2.
+core = 7.x
+version = 0.1.0
+package = SB Admin 2

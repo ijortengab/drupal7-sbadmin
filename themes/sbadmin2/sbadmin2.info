@@ -1,0 +1,14 @@
+name = SBAdmin2
+description = SBAdmin 2
+version = 1.0
+core = 7.x
+
+stylesheets[all][] = vendor/twitter-bootstrap/3.3.7/css/bootstrap.min.css
+stylesheets[all][] = vendor/font-awesome/4.7.0/css/font-awesome.css
+stylesheets[all][] = vendor/startbootstrap-sb-admin-2/3.3.7+1/css/sb-admin-2.css
+stylesheets[all][] = vendor/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.css
+scripts[]          = vendor/twitter-bootstrap/3.3.7/js/bootstrap.js
+scripts[]          = vendor/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.js
+regions[header] = Header
+regions[sidebar] = Sidebar
+regions[content] = Content
