@@ -24,9 +24,33 @@ cd drupal7-sbadmin2
 3. Buat direktori custom modules dan themes.
 
 ```
-mkdir -p $DRUPAL_ROOT/sites/all/modules/custom
 mkdir -p $DRUPAL_ROOT/sites/all/themes/custom
+mkdir -p $DRUPAL_ROOT/sites/all/modules/custom
 ```
 
-4A. Pindahkan 
+4. Copy module dan theme ke direktori Drupal.
 
+```
+cp -rf themes/sbadmin2 -t $DRUPAL_ROOT/sites/all/themes/custom
+cp -rf modules/sbadmin2 -t $DRUPAL_ROOT/sites/all/modules/custom
+```
+
+5. Download library vendor theme dan module.
+
+```
+cd $DRUPAL_ROOT/sites/all/themes/custom/sbadmin2
+chmod +x grab.sh
+./grab.sh
+```
+
+Ketik 'yes' dan enter
+
+```
+cd $DRUPAL_ROOT/sites/all/modules/custom/sbadmin2/sbadmin2_helper
+chmod +x grab.sh
+./grab.sh
+```
+
+Ketik 'yes' dan enter
+
+6. Module dan Theme siap di-enable.
