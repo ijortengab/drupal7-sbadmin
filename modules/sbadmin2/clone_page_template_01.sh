@@ -6,7 +6,7 @@ template=${template_prefix}${template}
 template_dash=$(echo $template | sed 's/_/-/g')
 
 echo This script will clone page based on \"${template}\" module.
-read -p "Module machine name:"  -i $template_prefix -e newmodule
+read -p "Module machine name:" -e newmodule
 if [[ $newmodule =~ [^a-z_0-9] ]];then
     echo Machine name harus huruf kecil, underscore, dan angka.
 fi

@@ -1,0 +1,6 @@
+/**
+ * Module admin_menu tertutup oleh SbAdmin2.
+ */
+#admin-menu, #admin-menu .dropdown {
+    z-index: 9999;
+}
