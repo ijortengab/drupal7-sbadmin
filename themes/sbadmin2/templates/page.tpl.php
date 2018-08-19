@@ -15,7 +15,7 @@
             <?php print render($page['sidebar']) ;?>
         </nav>
         <div id="page-wrapper">
-                
+                <?php print $messages; ?>
             <?php print render($title_prefix); ?>
             <?php if ($title): ?>
                 <div class="row">

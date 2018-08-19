@@ -21,6 +21,14 @@ function sbadmin2_helper_menu() {
         'weight' => -10,
         'type' => MENU_CALLBACK,
     );
+    $items['dashboard'] = array(
+        'title' => 'Dashboard',
+        'description' => 'Dashboard.',
+        'page callback' => 'sbadmin2_helper_dashboard_page_callback',
+        'access callback' => true,
+        'weight' => -10,
+        'type' => MENU_CALLBACK,
+    );
     return $items;
 }
 
@@ -37,6 +45,21 @@ function sbadmin2_helper_login_page_callback() {
 }
 
 /**
+ * Implements of hook_form_FORM_ID_alter.
+ * Form ID: user_login_block.
+ */
+function sbadmin2_helper_form_user_login_block_alter(&$form, &$form_state) {
+    // $debugname = 'form'; $debugfile = 'debug.html'; $debugvariable = '|||wakwaw|||'; if (array_key_exists($debugname, get_defined_vars())) { $debugvariable = $$debugname; } elseif (isset($this) && property_exists($this, $debugname)) { $debugvariable = $this->{$debugname}; $debugname = '$this->' . $debugname; } if ($debugvariable !== '|||wakwaw|||') { ob_start(); echo "\r\n<pre>" . basename(__FILE__ ). ":" . __LINE__ . " (Time: " . date('c') . ", Direktori: " . dirname(__FILE__) . ")\r\n". 'var_dump(' . $debugname . '): '; var_dump($debugvariable); echo "</pre>\r\n"; $debugoutput = ob_get_contents();ob_end_clean(); file_put_contents($debugfile, $debugoutput, FILE_APPEND); }
+    // $form['name']['#type'] = 'sbadmin2_textfield3';
+    // $form['pass']['#type'] = 'sbadmin2_password3';
+    // $form['actions']['submit']['#type'] = 'sbadmin2_submit3';
+    // $form['actions']['#weight'] = null;
+    // $form['name']['#attributes']['placeholder'] = $form['name']['#title'];
+    // $form['pass']['#title_display'] = 'invisible';
+    // $form['pass']['#attributes']['placeholder'] = $form['pass']['#title'];
+}
+
+/**
  * Callback of /front.
  */
 function sbadmin2_helper_front_page_callback() {
@@ -45,6 +68,13 @@ function sbadmin2_helper_front_page_callback() {
         return drupal_goto('login');
     }
     return drupal_goto('user');
+}
+
+/**
+ * Callback of /front.
+ */
+function sbadmin2_helper_dashboard_page_callback() {
+    return 'Coming Soon.';
 }
 
 /**
@@ -70,4 +100,64 @@ function sbadmin2_helper_js_alter(&$javascript) {
                 break;
         }
     }
+}
+
+/**
+ * Implements of hook_element_info().
+ */
+function sbadmin2_helper_element_info() {
+    $reference = system_element_info();
+    $types['sbadmin2_textfield3'] = $reference['textfield'];
+    $types['sbadmin2_textfield3']['#theme'] = 'sbadmin2_textfield3';
+    $types['sbadmin2_textfield3']['#theme_wrappers'] = array('sbadmin2_form_element');
+    $types['sbadmin2_password3'] = $reference['password'];
+    $types['sbadmin2_password3']['#theme'] = 'sbadmin2_password3';
+    $types['sbadmin2_password3']['#theme_wrappers'] = array('sbadmin2_form_element');
+    $types['sbadmin2_submit3'] = $reference['submit'];
+    $types['sbadmin2_submit3']['#theme_wrappers'] = array('sbadmin2_submit3');
+    return $types;
+}
+
+function sbadmin2_helper_element_info_alter(&$type) {
+
+}
+
+/**
+ * Implements hook_theme().
+ */
+function sbadmin2_helper_theme() {
+    return array(
+        'sbadmin2_textfield3' => array(
+            'render element' => 'element',
+            'file' => 'sbadmin2_helper.theme.inc',
+        ),
+        'sbadmin2_password3' => array(
+            'render element' => 'element',
+            'file' => 'sbadmin2_helper.theme.inc',
+        ),
+        'sbadmin2_form_element' => array(
+            'render element' => 'element',
+            'template' => 'sbadmin2-form-element',
+            'file' => 'sbadmin2_helper.theme.inc',
+        ),
+        'sbadmin2_submit3' => array(
+            'render element' => 'element',
+            'file' => 'sbadmin2_helper.theme.inc',
+        ),
+    );
+}
+
+/**
+ * Implements hook_preprocess_html().
+ */
+function sbadmin2_helper_preprocess_html(&$variables) {
+    $html_tag = array(
+      '#type' => 'html_tag',
+      '#tag' => 'meta',
+      '#attributes' => array(
+        'name' => 'viewport',
+        'content' => 'width=device-width, initial-scale=1',
+      ),
+    );
+    drupal_add_html_head($html_tag, 'viewport');
 }
