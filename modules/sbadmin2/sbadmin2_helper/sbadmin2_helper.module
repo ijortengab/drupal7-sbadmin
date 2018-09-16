@@ -75,10 +75,15 @@ function sbadmin2_helper_form_user_login_block_alter(&$form, &$form_state) {
  */
 function sbadmin2_helper_front_page_callback() {
     global $user;
-    if (user_is_anonymous()) {
-        return drupal_goto('login');
+    if ($user->uid) {
+        menu_set_active_item('user/' . $user->uid);
+        return menu_execute_active_handler(NULL, FALSE);
     }
-    return drupal_goto('user');
+    else {
+        // Todo: form spesial login.
+        // dengan alternative login melalui sosmed.
+        return drupal_get_form('user_login');
+    }
 }
 
 /**
