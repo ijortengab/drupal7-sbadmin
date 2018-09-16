@@ -1,10 +1,22 @@
 <?php
-    
-    
-    
-// set bahwa defult front page adalah /front.
+
 // - saat instalasia module, maka set block user-menu berada pada region header.
 // - set block tersebut sebagai no title
 // - saat instalasia module, maka set block main-menu berada pada region sidebar.
 // - set block tersebut sebagai no title
 
+/**
+ * Implements hook_enable().
+ */
+function sbadmin2_helper_enable() {
+    variable_set('sbadmin2_helper_site_frontpage_old', variable_get('site_frontpage'));
+    variable_set('site_frontpage', 'sbadmin2-front');
+}
+
+/**
+ * Implements hook_disable().
+ */
+function sbadmin2_helper_disable() {
+    variable_set('site_frontpage', variable_get('sbadmin2_helper_site_frontpage_old'));
+    variable_del('sbadmin2_helper_site_frontpage_old');
+}

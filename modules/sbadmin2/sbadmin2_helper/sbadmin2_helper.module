@@ -5,7 +5,7 @@
  */
 function sbadmin2_helper_menu() {
     $items = array();
-    $items['login'] = array(
+    $items['sbadmin2-login'] = array(
         'title' => 'Login',
         'description' => 'Login Page.',
         'page callback' => 'sbadmin2_helper_login_page_callback',
@@ -16,7 +16,7 @@ function sbadmin2_helper_menu() {
         // 'type' => MENU_NORMAL_ITEM,
         'type' => MENU_CALLBACK,
     );
-    $items['front'] = array(
+    $items['sbadmin2-front'] = array(
         'title' => 'Front',
         'description' => 'Front Page.',
         'page callback' => 'sbadmin2_helper_front_page_callback',
@@ -24,7 +24,7 @@ function sbadmin2_helper_menu() {
         'weight' => -10,
         'type' => MENU_CALLBACK,
     );
-    $items['dashboard'] = array(
+    $items['sbadmin2-dashboard'] = array(
         'title' => 'Dashboard',
         'description' => 'Dashboard.',
         'page callback' => 'sbadmin2_helper_dashboard_page_callback',
@@ -33,6 +33,14 @@ function sbadmin2_helper_menu() {
         'type' => MENU_CALLBACK,
     );
     return $items;
+}
+
+/**
+ * Implements of hook_form_FORM_ID_alter().
+ */
+function sbadmin2_helper_form_system_site_information_settings_alter(&$form, &$form_state, $form_id) {
+    $form['front_page']['site_frontpage']['#disabled'] = true;
+    $form['front_page']['site_frontpage']['#description'] = t('This value take over by sbadmin2_helper module.');
 }
 
 /**
