@@ -9,8 +9,11 @@ function sbadmin2_helper_menu() {
         'title' => 'Login',
         'description' => 'Login Page.',
         'page callback' => 'sbadmin2_helper_login_page_callback',
-        'access callback' => true,
-        'weight' => -10,
+        'access callback' => false,
+        // 'access callback' => 'user_is_anonymous',
+        'weight' => -5,
+        // 'menu_name' => 'main-menu',
+        // 'type' => MENU_NORMAL_ITEM,
         'type' => MENU_CALLBACK,
     );
     $items['front'] = array(
@@ -25,7 +28,7 @@ function sbadmin2_helper_menu() {
         'title' => 'Dashboard',
         'description' => 'Dashboard.',
         'page callback' => 'sbadmin2_helper_dashboard_page_callback',
-        'access callback' => true,
+        'access callback' => 'user_is_logged_in',
         'weight' => -10,
         'type' => MENU_CALLBACK,
     );
@@ -77,30 +80,7 @@ function sbadmin2_helper_dashboard_page_callback() {
     return 'Coming Soon.';
 }
 
-/**
- * Implements hook_library_alter().
- */
-function sbadmin2_helper_library_alter(&$libraries, $module) {
-    if (!path_is_admin(current_path())) {
-        $libraries['jquery']['version'] = '3.3.1';
-        $libraries['jquery']['js']['misc/jquery.js']['data'] = drupal_get_path('module', 'sbadmin2_helper').'/vendor/jquery/3.3.1/jquery.min.js';
-    }
-}
 
-/**
- * Implements hook_js_alter().
- */
-function sbadmin2_helper_js_alter(&$javascript) {
-    foreach ($javascript as $key => &$value) {
-        switch ($key) {
-            // case 'settings':
-                // continue;
-            default:
-                $value['scope'] = 'footer';
-                break;
-        }
-    }
-}
 
 /**
  * Implements of hook_element_info().
@@ -147,10 +127,15 @@ function sbadmin2_helper_theme() {
     );
 }
 
+
 /**
  * Implements hook_preprocess_html().
  */
 function sbadmin2_helper_preprocess_html(&$variables) {
+    global $theme;
+    if ($theme !== 'sbadmin2') {
+        return;
+    }
     $html_tag = array(
       '#type' => 'html_tag',
       '#tag' => 'meta',
@@ -160,4 +145,35 @@ function sbadmin2_helper_preprocess_html(&$variables) {
       ),
     );
     drupal_add_html_head($html_tag, 'viewport');
+}
+
+/**
+ * Implements hook_library_alter().
+ */
+function sbadmin2_helper_library_alter(&$libraries, $module) {
+    global $theme;
+    if ($theme !== 'sbadmin2') {
+        return;
+    }
+    if (!path_is_admin(current_path())) {
+        $libraries['jquery']['version'] = '3.3.1';
+        $libraries['jquery']['js']['misc/jquery.js']['data'] = drupal_get_path('module', 'sbadmin2_helper').'/vendor/jquery/3.3.1/jquery.min.js';
+    }
+}
+
+/**
+ * Implements hook_js_alter().
+ */
+function sbadmin2_helper_js_alter(&$javascript) {
+    global $theme;
+    if ($theme !== 'sbadmin2') {
+        return;
+    }
+    foreach ($javascript as $key => &$value) {
+        switch ($key) {
+            default:
+                $value['scope'] = 'footer';
+                break;
+        }
+    }
 }
