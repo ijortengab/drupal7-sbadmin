@@ -1,5 +1,7 @@
 <?php
 
+// Drupal Hook.
+
 /**
  * Implements of hook_menu();
  */
@@ -9,7 +11,7 @@ function sbadmin2_helper_menu() {
         'title' => 'Login',
         'description' => 'Login Page.',
         'page callback' => 'sbadmin2_helper_login_page_callback',
-        'access callback' => false,
+        'access callback' => true,
         // 'access callback' => 'user_is_anonymous',
         'weight' => -5,
         // 'menu_name' => 'main-menu',
@@ -36,12 +38,275 @@ function sbadmin2_helper_menu() {
 }
 
 /**
- * Implements of hook_form_FORM_ID_alter().
+ * Implements of hook_element_info().
+ *
+ * Menyediakan alternative type element sbb:
+ *
+ *  - `submit2` outputnya adalah: <button></button> dan tidak support element
+ *     children. Element children berupa property `#value`.
+ *  - `submit3` outputnya adalah: <button></button> dan support element
+ *     children.
+ *  - `textfield2` sama seperti `textfield` dengan modifikasi:
+ *     info title pindah ke placeholder.
+ *  - `password2` sama seperti `password` dengan modifikasi:
+ *     info title pindah ke placeholder.
  */
-function sbadmin2_helper_form_system_site_information_settings_alter(&$form, &$form_state, $form_id) {
-    $form['front_page']['site_frontpage']['#disabled'] = true;
-    $form['front_page']['site_frontpage']['#description'] = t('This value take over by sbadmin2_helper module.');
+function sbadmin2_helper_element_info() {
+    $reference = system_element_info();
+    // Type: `textfield2`.
+    $types['textfield2'] = $reference['textfield'];
+    $types['textfield2']['#theme'] = 'textfield2';
+    $types['textfield2']['#theme_wrappers'] = ['form_element2'];
+    // Type: `textfield3`.
+    $types['textfield3'] = $reference['textfield'];
+    $types['textfield3']['#theme_wrappers'] = [];
+
+    $types['password2'] = $reference['password'];
+    $types['password2']['#theme'] = 'password2';
+    $types['password2']['#theme_wrappers'] = ['form_element2'];
+
+    $types['submit2'] = $reference['submit'];
+    $types['submit2']['#theme'] = 'submit2';
+    $types['submit2']['#theme_wrappers'] = ['submit3'];
+    $types['submit3'] = $reference['submit'];
+    $types['submit3']['#theme_wrappers'] = ['submit3'];
+    $types['icon'] = [
+        '#theme' => 'icon',
+        '#bundle' => 'fontawesome',
+    ];
+    return $types;
 }
+
+/**
+ * Implements of hook_element_info_alter.
+ */
+function sbadmin2_helper_element_info_alter(&$type) {
+    $form_elements = [
+        'form', 'textarea', 'textfield', 'password', 'select', 'submit',
+        'checkbox', 'button', 'file', 'managed_file', 'date_combo'
+    ];
+    foreach ($form_elements as $element) {
+        $type[$element]['#sbadmin2'] = true;
+        $type[$element]['#process'][] = 'sbadmin2_helper_element_process';
+        $type[$element]['#pre_render'][] = 'sbadmin2_helper_element_pre_render';
+    }
+    // $type['managed_file']['#attached']['js'][] = [
+        // 'type' => 'file',
+        // 'data' => drupal_get_path('module', 'sbadmin2_helper').'/js/managed_file.js',
+        // 'group' => JS_THEME,
+    // ];
+    // $type['managed_file']['#attached']['js'][] = drupal_get_path('module', 'sbadmin2_helper').'/js/managed_file.js';
+
+}
+
+/**
+ * Adds our extra option to the field widget settings form.
+ *
+ * eg at
+ * /admin/structure/types/manage/{CONTENT_TYPE}/fields/{ENTITYREFERENCE_FIELD}
+ *
+ * Implements hook_form_FORMID_alter().
+ */
+function sbadmin2_helper_form_field_ui_field_edit_form_alter(&$form, $form_state) {
+    $supported_widgets = array(
+        'entityreference_autocomplete',
+        'entityreference_autocomplete_tags',
+    );
+    if (in_array($form['instance']['widget']['type']['#value'], $supported_widgets)) {
+        $instance = field_info_instance($form['instance']['entity_type']['#value'], $form['instance']['field_name']['#value'], $form['instance']['bundle']['#value']);
+        $widget = $instance['widget'];
+        $defaults = field_info_widget_settings($widget['type']);
+        $settings = array_merge($defaults, $widget['settings']);
+        $form['instance']['widget']['settings']['sbadmin2_helper'] = array(
+            '#type' => 'fieldset',
+            '#title' => t('SBAdmin2'),
+            '#collapsible' => TRUE,
+        );
+        $form['instance']['widget']['settings']['sbadmin2_helper']['select2_convert'] = array(
+            '#type' => 'checkbox',
+            '#title' => t('Convert to Select2'),
+            '#description' => t('This will convert to select2.'),
+            '#default_value' => isset($settings['sbadmin2_helper']['select2_convert']) ? $settings['sbadmin2_helper']['select2_convert'] : FALSE,
+        );
+    }
+}
+
+/**
+ * Implements hook_field_widget_form_alter().
+ *
+ * Support select2 dan entityconnect.
+ */
+function sbadmin2_helper_field_widget_form_alter(&$element, &$form_state, $context) {
+
+    if ($context['field']['type'] == 'entityreference') {
+        // Support for library select2.
+        if (!empty($context['instance']['widget']['settings']['sbadmin2_helper']['select2_convert'])) {
+            $element['target_id']['#sbadmin2_select2'] = true;
+        }
+        //  Support for module entityconnect.
+        $supported_widgets = array(
+            'entityreference_autocomplete',
+            'entityreference_autocomplete_tags',
+        );
+        if (module_exists('entityconnect') && in_array($context['instance']['widget']['type'], $supported_widgets)) {
+            $element['#pre_render'][] = 'sbadmin2_helper_entityconnect_pre_render';
+        }
+    }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function sbadmin2_helper_theme() {
+    return array(
+        'input_group' => array(
+            'render element' => 'element',
+            'file' => 'sbadmin2_helper.theme.inc',
+            'template' => 'templates/div-wrapper',
+        ),
+        'input_group_button' => array(
+            'render element' => 'element',
+            'file' => 'sbadmin2_helper.theme.inc',
+            'template' => 'templates/div-wrapper',
+        ),
+        'input_group_addon' => array(
+            'render element' => 'element',
+            'file' => 'sbadmin2_helper.theme.inc',
+            'template' => 'templates/span-wrapper',
+       ),
+        // Theme hook `form_element2` merupakan theme_wrappers function.
+        // Digunakan oleh element_type `textfield2`, `password2`.
+        'form_element2' => array(
+            'render element' => 'element',
+            'file' => 'sbadmin2_helper.theme.inc',
+            'template' => 'templates/form-element-wrapper',
+        ),
+        // Theme hook `textfield2` merupakan theme function.
+        // Digunakan oleh element_type `textfield2`.
+        'textfield2' => array(
+            'render element' => 'element',
+            'file' => 'sbadmin2_helper.theme.inc',
+        ),
+        // Theme hook `password2` merupakan theme function.
+        // Digunakan oleh element_type `password2`.
+        'password2' => array(
+            'render element' => 'element',
+            'file' => 'sbadmin2_helper.theme.inc',
+        ),
+        // Theme hook `submit2` merupakan theme function.
+        // Digunakan oleh element_type `submit2`.
+        'submit2' => array(
+            'render element' => 'element',
+            'file' => 'sbadmin2_helper.theme.inc',
+        ),
+        // Theme hook `submit3` merupakan theme_wrappers function.
+        // Digunakan oleh element_type `submit2`.
+        'submit3' => array(
+            'render element' => 'element',
+            'file' => 'sbadmin2_helper.theme.inc',
+            'template' => 'templates/button-wrapper',
+        ),
+        // Theme hook `icon` merupakan theme function.
+        // Digunakan oleh element_type `icon`.
+        'icon' => array(
+            'render element' => 'element',
+            'file' => 'sbadmin2_helper.theme.inc',
+        ),
+    );
+}
+
+/**
+ * Implements hook_library().
+ */
+function sbadmin2_helper_library() {
+    $path = drupal_get_path('module', 'sbadmin2_helper');
+    $libraries['sbadmin2.managed_file'] = [
+        'title' => 'SBAdmin2 Managed file',
+        'website' => 'https://github.com/ijortengab/drupal7-sbadmin2',
+        'version' => '1.0.0',
+        'js' => [
+            $path.'/js/managed_file.js' => [
+                'group' => JS_THEME,
+            ],
+        ],
+        'css' => [
+            $path.'/css/managed_file.css' => [],
+        ],
+    ];
+    $libraries['sbadmin2.tooltip'] = [
+        'title' => 'SBAdmin2 Tooltip',
+        'website' => 'https://github.com/ijortengab/drupal7-sbadmin2',
+        'version' => '1.0.0',
+        'js' => [
+            $path.'/js/tooltip.js' => [
+                'group' => JS_THEME,
+            ],
+        ],
+    ];
+    return $libraries;
+}
+
+/**
+ * Implements hook_library_alter().
+ */
+function sbadmin2_helper_library_alter(&$libraries, $module) {
+    // global $theme;
+    // if ($theme !== 'sbadmin2') {
+        // return;
+    // }
+    // if (!path_is_admin(current_path())) {
+        // $libraries['jquery']['version'] = '3.3.1';
+        // $libraries['jquery']['js']['misc/jquery.js']['data'] = drupal_get_path('module', 'sbadmin2_helper').'/vendor/jquery/3.3.1/jquery.min.js';
+    // }
+}
+
+function sbadmin2_helper_css_alter(&$css) {
+    global $theme;
+    if ($theme !== 'sbadmin2') {
+        $path = drupal_get_path('module', 'sbadmin2_helper');
+        foreach ($css as $key => $value) {
+            if (strpos($key, $path) === 0) {
+                unset($css[$key]);
+            }
+        }
+        return;
+    }
+    // http://efaktur7/sites/all/modules/date/date_api/date.css?pn2jbj
+    unset($css[drupal_get_path('module', 'system') . '/system.theme.css']);
+    if (module_exists('date_api')) {
+        unset($css[drupal_get_path('module', 'date_api') . '/date.css']);
+    }
+}
+
+/**
+ * Implements hook_js_alter().
+ */
+function sbadmin2_helper_js_alter(&$javascript) {
+    global $theme;
+
+    if ($theme !== 'sbadmin2') {
+        $path = drupal_get_path('module', 'sbadmin2_helper');
+        foreach ($javascript as $key => $value) {
+            if (strpos($key, $path) === 0) {
+                unset($javascript[$key]);
+            }
+        }
+        return;
+    }
+
+    foreach ($javascript as $key => &$value) {
+        switch ($key) {
+            case 'settings':
+                $value['group'] = -1000;
+                $value['weight'] = -1000;
+            default:
+                $value['scope'] = 'footer';
+                break;
+        }
+    }
+}
+
+// Page Callback.
 
 /**
  * Callback of /login.
@@ -51,23 +316,9 @@ function sbadmin2_helper_login_page_callback() {
     if ($user->uid) {
         return drupal_goto();
     }
+    drupal_set_title('');
     $block = block_load('user', 'login');
     return _block_get_renderable_array(_block_render_blocks(array($block)));
-}
-
-/**
- * Implements of hook_form_FORM_ID_alter.
- * Form ID: user_login_block.
- */
-function sbadmin2_helper_form_user_login_block_alter(&$form, &$form_state) {
-    // $debugname = 'form'; $debugfile = 'debug.html'; $debugvariable = '|||wakwaw|||'; if (array_key_exists($debugname, get_defined_vars())) { $debugvariable = $$debugname; } elseif (isset($this) && property_exists($this, $debugname)) { $debugvariable = $this->{$debugname}; $debugname = '$this->' . $debugname; } if ($debugvariable !== '|||wakwaw|||') { ob_start(); echo "\r\n<pre>" . basename(__FILE__ ). ":" . __LINE__ . " (Time: " . date('c') . ", Direktori: " . dirname(__FILE__) . ")\r\n". 'var_dump(' . $debugname . '): '; var_dump($debugvariable); echo "</pre>\r\n"; $debugoutput = ob_get_contents();ob_end_clean(); file_put_contents($debugfile, $debugoutput, FILE_APPEND); }
-    // $form['name']['#type'] = 'sbadmin2_textfield3';
-    // $form['pass']['#type'] = 'sbadmin2_password3';
-    // $form['actions']['submit']['#type'] = 'sbadmin2_submit3';
-    // $form['actions']['#weight'] = null;
-    // $form['name']['#attributes']['placeholder'] = $form['name']['#title'];
-    // $form['pass']['#title_display'] = 'invisible';
-    // $form['pass']['#attributes']['placeholder'] = $form['pass']['#title'];
 }
 
 /**
@@ -76,73 +327,182 @@ function sbadmin2_helper_form_user_login_block_alter(&$form, &$form_state) {
 function sbadmin2_helper_front_page_callback() {
     global $user;
     if ($user->uid) {
-        menu_set_active_item('user/' . $user->uid);
-        return menu_execute_active_handler(NULL, FALSE);
+        menu_set_active_item('sbadmin2-dashboard');
     }
     else {
-        // Todo: form spesial login.
-        // dengan alternative login melalui sosmed.
-        return drupal_get_form('user_login');
+        menu_set_active_item('sbadmin2-login');
     }
+    return menu_execute_active_handler(NULL, FALSE);
 }
 
 /**
  * Callback of /front.
  */
 function sbadmin2_helper_dashboard_page_callback() {
-    return 'Coming Soon.';
+    // todo: gunakan hook_alter pada custom module
+    return 'Welcome.';
 }
 
 
+// Form Alter.
 
 /**
- * Implements of hook_element_info().
+ * Implements of hook_form_FORM_ID_alter.
+ * Form ID: user_login_block.
  */
-function sbadmin2_helper_element_info() {
-    $reference = system_element_info();
-    $types['sbadmin2_textfield3'] = $reference['textfield'];
-    $types['sbadmin2_textfield3']['#theme'] = 'sbadmin2_textfield3';
-    $types['sbadmin2_textfield3']['#theme_wrappers'] = array('sbadmin2_form_element');
-    $types['sbadmin2_password3'] = $reference['password'];
-    $types['sbadmin2_password3']['#theme'] = 'sbadmin2_password3';
-    $types['sbadmin2_password3']['#theme_wrappers'] = array('sbadmin2_form_element');
-    $types['sbadmin2_submit3'] = $reference['submit'];
-    $types['sbadmin2_submit3']['#theme_wrappers'] = array('sbadmin2_submit3');
-    return $types;
-}
-
-function sbadmin2_helper_element_info_alter(&$type) {
-
+function sbadmin2_helper_form_user_login_block_alter(&$form, &$form_state) {
+    // $form['name']['#type'] = 'sbadmin2_textfield3';
+    // $form['pass']['#type'] = 'sbadmin2_password3';
+    // $form['actions']['submit']['#type'] = 'sbadmin2_submit3';
+    // $form['actions']['#weight'] = null;
+    // $form['name']['#attributes']['placeholder'] = $form['name']['#title'];
+    // $form['pass']['#title_display'] = 'invisible';
+    // $form['pass']['#attributes']['placeholder'] = $form['pass']['#title'];
+    $form['name']['#type'] = 'textfield2';
+    $form['pass']['#type'] = 'password2';
 }
 
 /**
- * Implements hook_theme().
+ * Implements of hook_form_FORM_ID_alter().
+ *
+ * Modifikasi form id `search_block_form`.
  */
-function sbadmin2_helper_theme() {
-    return array(
-        'sbadmin2_textfield3' => array(
-            'render element' => 'element',
-            'file' => 'sbadmin2_helper.theme.inc',
-        ),
-        'sbadmin2_password3' => array(
-            'render element' => 'element',
-            'file' => 'sbadmin2_helper.theme.inc',
-        ),
-        'sbadmin2_form_element' => array(
-            'render element' => 'element',
-            'template' => 'sbadmin2-form-element',
-            'file' => 'sbadmin2_helper.theme.inc',
-        ),
-        'sbadmin2_submit3' => array(
-            'render element' => 'element',
-            'file' => 'sbadmin2_helper.theme.inc',
-        ),
-    );
+function sbadmin2_helper_form_search_block_form_alter(&$form, &$form_state) {
+    // Jadikan kedua element menyatu.
+    $form['#sbadmin_input_group'] = true;
+    // Convert #type element submit yang mendukung children.
+    $form['actions']['submit']['#type'] = 'submit3';
+    // Tambah children berupa icon.
+    $form['actions']['submit']['icon_search'] = [
+        '#type' => 'icon',
+        '#icon' => 'search',
+        '#bundle' => 'glyphicon',
+    ];
 }
 
+/**
+ * Implements of hook_form_FORM_ID_alter().
+ *
+ * Modifikasi form id `masquerade_block_1`.
+ */
+function sbadmin2_helper_form_masquerade_block_1_alter(&$form, &$form_state) {
+    $form['#sbadmin_input_group'] = true;
+    $form['masquerade_user_field']['#sbadmin2_select2'] = true;
+    $form['masquerade_desc']['#weight'] = 10000;
+    unset($form['masquerade_user_field']['#prefix']);
+    unset($form['submit']['#suffix']);
+}
+
+/**
+ * Implements of hook_form_FORM_ID_alter().
+ *
+ */
+function sbadmin2_helper_form_menu_edit_item_alter(&$form, &$form_state) {
+    // Unset the previous value so that the new values get saved.
+    if (isset($form['options']['#value']['sbadmin2_icon'])) {
+        unset($form['options']['#value']['sbadmin2_icon']);
+    }
+    $default_value = isset($form['original_item']['#value']['options']['sbadmin2_icon']) ? $form['original_item']['#value']['options']['sbadmin2_icon'] : '';
+    $form['options']['sbadmin2_icon'] = [
+        '#title' => t('SBAdmin2 Icon'),
+        '#tree' => true,
+        '#parents' => array(
+            'options',
+            'sbadmin2_icon',
+        ),
+        '#type' => 'textfield',
+        '#description' => 'Give the icon name. Example: <em>dashboard</em>.',
+        '#default_value' => $default_value,
+    ];
+}
+
+/**
+ * Implements of hook_block_view_MODULE_DELTA_alter().
+ *
+ * Melakukan modifikasi theme_wrappers dari main menu.
+ */
+function sbadmin2_helper_block_view_system_main_menu_alter(&$data, $block) {
+    static $done = false;
+    if ($done === false) {
+        $done = true;
+        ctools_include('menu', 'sbadmin2_helper');
+        _sbadmin2_helper_main_menu_modified($data);
+        return _sbadmin2_helper_main_menu_modified($data);
+    }
+}
+
+/**
+ * Implements of hook_block_view_MODULE_DELTA_alter().
+ *
+ * Melakukan modifikasi theme_wrappers dari main menu.
+ */
+function sbadmin2_helper_block_view_system_user_menu_alter(&$data, $block) {
+    // ctools_include('menu', 'sbadmin2_helper');
+    // _sbadmin2_helper_main_menu_modified($data);
+    // return _sbadmin2_helper_main_menu_modified($data);
+    global $user;
+    // $name =
+    if ($user->uid) {
+        $data['content']['2']['#title'] = $user->name;
+    }
+
+}
+
+/**
+ * Implements of hook_form_FORM_ID_alter().
+ */
+function sbadmin2_helper_form_system_site_information_settings_alter(&$form, &$form_state, $form_id) {
+    // todo:
+    $form['front_page']['site_frontpage']['#value'] = 'sbadmin2-front';
+    $form['front_page']['site_frontpage']['#disabled'] = true;
+    $form['front_page']['site_frontpage']['#description'] .= ' '. t('<strong>This value take over by sbadmin2_helper module</strong>.');
+}
+
+// Preprocess theme HOOK.
+
+/**
+ * Implements hook_preprocess_link().
+ */
+function sbadmin2_helper_preprocess_link(&$variables) {
+    if (!empty($variables['options']) && !empty($variables['options']['sbadmin2_icon'])) {
+        $variables['options']['html'] = TRUE;
+        $variables['text'] = '<i class="fa fa-'. check_plain($variables['options']['sbadmin2_icon']) . ' fa-fw"></i> ' . $variables['text'];
+    }
+}
+
+/**
+ * Implements of hook_preprocess_HOOK().
+ *
+ * Preprocess theme_hook `page`.
+ *
+ * Mematikan $messages pada template page pada route `/sbadmin2-login` karena
+ * variable tersebut akan digunakan pada template `block__user__login`.
+ *
+ * @see template_preprocess_page.
+ */
+function sbadmin2_helper_preprocess_page(&$variables) {
+    if (current_path() == 'sbadmin2-login') {
+        $variables['show_messages'] = false;
+    }
+}
+
+/**
+ * Implements of hook_preprocess_HOOK().
+ *
+ * Preprocess theme_hook `block`.
+ *
+ * Menambah variable $messages ke template block--user--login.tpl.
+ */
+function sbadmin2_helper_preprocess_block(&$variables) {
+    if ($variables['block']->module == 'user' && $variables['block']->delta == 'login') {
+        $variables['messages'] = theme('status_messages');
+    }
+}
 
 /**
  * Implements hook_preprocess_html().
+ *
+ * Memberikan informasi meta viewport.
  */
 function sbadmin2_helper_preprocess_html(&$variables) {
     global $theme;
@@ -160,33 +520,74 @@ function sbadmin2_helper_preprocess_html(&$variables) {
     drupal_add_html_head($html_tag, 'viewport');
 }
 
-/**
- * Implements hook_library_alter().
- */
-function sbadmin2_helper_library_alter(&$libraries, $module) {
+// Other Callback.
+
+function sbadmin2_helper_element_process($element, &$form_state, $form) {
+    // Oper informasi form horizontal dari form ke element sehingga
+    // nanti bisa dioleh oleh theme_form_element.
+
+    if (isset($form['#sbadmin2_form_horizontal']) && $form['#sbadmin2_form_horizontal'] === true) {
+        $element['#sbadmin2_form_horizontal'] = true;
+    }
+
+    // Add support to select2. Ketika
+    if (!empty($element['#sbadmin2_select2'])) {
+        // Jika trigger form error, maka value dari form_state perlu kita
+        // kembalikan ke element.
+        $default_value = drupal_array_get_nested_value($form_state['values'], $element['#parents']);
+        empty($default_value) or $element['#sbadmin2_select2_default_value'] = $default_value;
+
+        if (is_numeric($default_value)) {
+            // Ini berarti hasil dari kembalian dari halaman edit entityconnect
+            // karena module telah mengubahnya menjadi numeric.
+            empty($element['#value']) or $element['#sbadmin2_select2_default_value'] = $element['#value'];
+        }
+    }
+    // Attach library kayaknya disini deh.
+    if (isset($element['#type']) && $element['#type'] == 'managed_file' && !empty($element['#sbadmin2'])) {
+        $element['#attached']['library'][] = ['sbadmin2_helper', 'sbadmin2.managed_file'];
+    }
+    return $element;
+}
+
+function sbadmin2_helper_element_pre_render($element) {
     global $theme;
     if ($theme !== 'sbadmin2') {
-        return;
+        return $element;
     }
-    if (!path_is_admin(current_path())) {
-        $libraries['jquery']['version'] = '3.3.1';
-        $libraries['jquery']['js']['misc/jquery.js']['data'] = drupal_get_path('module', 'sbadmin2_helper').'/vendor/jquery/3.3.1/jquery.min.js';
+    if (isset($element['#sbadmin2']) && $element['#sbadmin2'] === true) {
+        ctools_include('pre_render', 'sbadmin2_helper');
+        return _sbadmin2_helper_pre_render($element);
     }
+    return $element;
 }
 
 /**
- * Implements hook_js_alter().
+ *
  */
-function sbadmin2_helper_js_alter(&$javascript) {
-    global $theme;
-    if ($theme !== 'sbadmin2') {
-        return;
-    }
-    foreach ($javascript as $key => &$value) {
-        switch ($key) {
-            default:
-                $value['scope'] = 'footer';
-                break;
-        }
-    }
+function sbadmin2_helper_entityconnect_pre_render($element) {
+    ctools_include('pre_render', 'sbadmin2_helper');
+    return _sbadmin2_helper_entityconnect_pre_render($element);
+}
+
+function sbadmin2_helper_js_info() {
+    $callbacks['entityreference_autocomplete_single'] = array();
+    return $callbacks;
+}
+
+function sbadmin2_helper_js_callback_entityreference_autocomplete_single($args, $data) {
+  $json = array();
+  $json['content'] = '<p>My content</p>';
+  return $json;
+}
+
+
+
+/**
+ * Implements of hook_systemix_conditional_attached_library().
+ */
+function sbadmin2_helper_systemix_conditional_attached_library() {
+    return [
+        'sbadmin2_helper' => ['sbadmin2_helper', 'sbadmin2.managed_file'],
+    ];
 }

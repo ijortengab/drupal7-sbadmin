@@ -2,3 +2,9 @@
   terdapat informasi versi dari jquery. Jadi jika versi jquery diganti menjadi
   yang terbaru, maka terdapat file sh yang akan otomatis membaca file RESOURCES.txt
   kemudian menyesuaikan versi jquery yang terdapat pada file *.module.
+-
+
+
+## Referensi
+
+https://startlaravel.com/themes/sb-admin-laravel-5/

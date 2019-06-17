@@ -54,3 +54,5 @@ chmod +x grab.sh
 Ketik 'yes' dan enter
 
 6. Module dan Theme siap di-enable.
+
+

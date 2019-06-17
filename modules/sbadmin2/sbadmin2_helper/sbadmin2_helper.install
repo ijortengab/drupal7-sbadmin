@@ -5,12 +5,88 @@
 // - saat instalasia module, maka set block main-menu berada pada region sidebar.
 // - set block tersebut sebagai no title
 
+function _sbadmin2_helper_install_blocks() {
+    return [
+        'system_main' => [
+            'module' => 'system',
+            'delta' => 'main',
+            'theme' => 'sbadmin2',
+            'weight' => '0',
+            'region' => 'content',
+        ],
+        'system_main-menu' => [
+            'module' => 'system',
+            'delta' => 'main-menu',
+            'theme' => 'sbadmin2',
+            'weight' => '0',
+            'region' => 'sidebar',
+        ],
+        'system_user-menu' => [
+            'module' => 'system',
+            'delta' => 'user-menu',
+            'theme' => 'sbadmin2',
+            'weight' => '0',
+            'region' => 'header',
+        ],
+        'search_form' => [
+            'module' => 'search',
+            'delta' => 'form',
+            'theme' => 'sbadmin2',
+            'weight' => '-10',
+            'region' => 'sidebar',
+        ],
+    ];
+}
+
 /**
  * Implements hook_enable().
  */
 function sbadmin2_helper_enable() {
     variable_set('sbadmin2_helper_site_frontpage_old', variable_get('site_frontpage'));
     variable_set('site_frontpage', 'sbadmin2-front');
+    // Disabled semua block yang berada pada region sidebar, header, dan content.
+    module_load_include('inc', 'block', 'block.admin');
+    $blocks = [];
+    foreach (block_admin_display_prepare_blocks('sbadmin2') as $i => $block) {
+        $key = $block['module'] . '_' . $block['delta'];
+        if (!in_array($key, ['system_main', 'system_main-menu', 'system_user-menu'])
+          && in_array($block['region'], ['header', 'sidebar', 'content'])
+        ) {
+            $blocks[$key]['module'] = $block['module'];
+            $blocks[$key]['delta'] = $block['delta'];
+            $blocks[$key]['theme'] = 'sbadmin2';
+            $blocks[$key]['weight'] = $block['weight'];
+            $blocks[$key]['region'] = -1;
+        }
+    }
+    // Sef default block yang seharusnya hanya berada pada region sidebar,
+    // header, dan content.
+    $blocks = array_merge($blocks, _sbadmin2_helper_install_blocks());
+    // Update db.
+    foreach ($blocks as $block) {
+        $block['status'] = (int) ($block['region'] != BLOCK_REGION_NONE);
+        $block['region'] = $block['status'] ? $block['region'] : '';
+        db_update('block')
+            ->fields([
+                'status' => $block['status'],
+                'weight' => $block['weight'],
+                'region' => $block['region'],
+            ])
+            ->condition('module', $block['module'])
+            ->condition('delta', $block['delta'])
+            ->condition('theme', $block['theme'])
+            ->execute();
+    }
+    // Hide title pada Main Menu dan User Menu.
+    foreach (['main-menu', 'user-menu'] as $delta) {
+        db_update('block')
+            ->fields(array(
+              'title' => '<none>',
+            ))
+            ->condition('module', 'system')
+            ->condition('delta', $delta)
+            ->execute();
+    }
 }
 
 /**
@@ -19,4 +95,14 @@ function sbadmin2_helper_enable() {
 function sbadmin2_helper_disable() {
     variable_set('site_frontpage', variable_get('sbadmin2_helper_site_frontpage_old'));
     variable_del('sbadmin2_helper_site_frontpage_old');
+}
+
+/**
+ * Module ini harus paling akhir daripada module `file_undo_button`.
+ */
+function sbadmin2_helper_install() {
+  db_update('system')
+    ->fields(array('weight' => 1000))
+    ->condition('name', 'sbadmin2_helper', '=')
+    ->execute();
 }
