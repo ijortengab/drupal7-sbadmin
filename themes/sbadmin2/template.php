@@ -9,6 +9,9 @@ function sbadmin2_theme($existing, $type, $theme, $path) {
             'render element' => 'form',
             'template' => 'templates/node-form',
         ],
+        'menu_nolink' => [
+            'render element' => 'element',
+        ],
     ];
 }
 
@@ -69,12 +72,26 @@ function sbadmin2_menu_link__user_menu(&$variables) {
 }
 
 function sbadmin2_menu_link__main_menu(&$variables) {
-
     sbadmin2_unset_drupal_class($variables);
     return theme_menu_link($variables);
 }
 
+function sbadmin2_menu_nolink(&$variables) {
+    sbadmin2_unset_drupal_class($variables);
+    $element = $variables['element'];
+    $sub_menu = '';
+    if ($element['#below']) {
+        $sub_menu = drupal_render($element['#below']);
+    }
+    $element['#localized_options']['external'] = true;
+    $output = l($element['#title'], 'javascript:void(0)', $element['#localized_options']);
+    return '<li' . drupal_attributes($element['#attributes']) . '>' . $output . $sub_menu . "</li>\n";
+}
+
+
 function sbadmin2_unset_drupal_class(&$variables) {
+    // $tempe = $variables['element'];
+
   // Hapus class bawaan Drupal yakni first, last, dan leaf.
   if (in_array('first', $variables['element']['#attributes']['class'])) {
       $key = array_search('first', $variables['element']['#attributes']['class']);
@@ -86,6 +103,14 @@ function sbadmin2_unset_drupal_class(&$variables) {
   }
   if (in_array('leaf', $variables['element']['#attributes']['class'])) {
       $key = array_search('leaf', $variables['element']['#attributes']['class']);
+      unset($variables['element']['#attributes']['class'][$key]);
+  }
+  if (in_array('active-trail', $variables['element']['#attributes']['class'])) {
+      $key = array_search('active-trail', $variables['element']['#attributes']['class']);
+      unset($variables['element']['#attributes']['class'][$key]);
+  }
+  if (in_array('expanded', $variables['element']['#attributes']['class'])) {
+      $key = array_search('expanded', $variables['element']['#attributes']['class']);
       unset($variables['element']['#attributes']['class'][$key]);
   }
 }

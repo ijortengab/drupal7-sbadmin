@@ -1,0 +1,15 @@
+https://cdnjs.cloudflare.com/ajax/libs/metisMenu/3.0.4/metisMenu.css
+
+https://cdnjs.cloudflare.com/ajax/libs/metisMenu/3.0.4/metisMenu.css.map
+
+https://cdnjs.cloudflare.com/ajax/libs/metisMenu/3.0.4/metisMenu.js
+
+https://cdnjs.cloudflare.com/ajax/libs/metisMenu/3.0.4/metisMenu.js.map
+
+https://cdnjs.cloudflare.com/ajax/libs/metisMenu/3.0.4/metisMenu.min.css
+
+https://cdnjs.cloudflare.com/ajax/libs/metisMenu/3.0.4/metisMenu.min.css.map
+
+https://cdnjs.cloudflare.com/ajax/libs/metisMenu/3.0.4/metisMenu.min.js
+
+https://cdnjs.cloudflare.com/ajax/libs/metisMenu/3.0.4/metisMenu.min.js.map

@@ -1,0 +1,7 @@
+https://cdnjs.cloudflare.com/ajax/libs/metisMenu/1.1.3/metisMenu.css
+
+https://cdnjs.cloudflare.com/ajax/libs/metisMenu/1.1.3/metisMenu.js
+
+https://cdnjs.cloudflare.com/ajax/libs/metisMenu/1.1.3/metisMenu.min.css
+
+https://cdnjs.cloudflare.com/ajax/libs/metisMenu/1.1.3/metisMenu.min.js

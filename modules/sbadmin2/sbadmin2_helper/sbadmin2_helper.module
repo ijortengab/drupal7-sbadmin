@@ -426,7 +426,6 @@ function sbadmin2_helper_block_view_system_main_menu_alter(&$data, $block) {
     if ($done === false) {
         $done = true;
         ctools_include('menu', 'sbadmin2_helper');
-        _sbadmin2_helper_main_menu_modified($data);
         return _sbadmin2_helper_main_menu_modified($data);
     }
 }
@@ -461,7 +460,8 @@ function sbadmin2_helper_form_system_site_information_settings_alter(&$form, &$f
 // Preprocess theme HOOK.
 
 /**
- * Implements hook_preprocess_link().
+ * Implements hook_preprocess_HOOK().
+ * Preprocess theme `link`.
  */
 function sbadmin2_helper_preprocess_link(&$variables) {
     if (!empty($variables['options']) && !empty($variables['options']['sbadmin2_icon'])) {
