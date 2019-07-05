@@ -243,6 +243,16 @@ function sbadmin2_helper_library() {
             ],
         ],
     ];
+    $libraries['sbadmin2.theme'] = [
+        'title' => 'SBAdmin2 Theme',
+        'website' => 'https://github.com/ijortengab/drupal7-sbadmin2',
+        'version' => '1.0.0',
+        'js' => [
+            $path.'/js/theme.js' => [
+                'group' => JS_THEME,
+            ],
+        ],
+    ];
     return $libraries;
 }
 
@@ -283,7 +293,6 @@ function sbadmin2_helper_css_alter(&$css) {
  */
 function sbadmin2_helper_js_alter(&$javascript) {
     global $theme;
-
     if ($theme !== 'sbadmin2') {
         $path = drupal_get_path('module', 'sbadmin2_helper');
         foreach ($javascript as $key => $value) {
@@ -293,7 +302,6 @@ function sbadmin2_helper_js_alter(&$javascript) {
         }
         return;
     }
-
     foreach ($javascript as $key => &$value) {
         switch ($key) {
             case 'settings':

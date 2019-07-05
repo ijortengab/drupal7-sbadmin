@@ -111,3 +111,11 @@ a.tabledrag-handle .handle{
     margin-bottom: 0;
     padding: 0;
 }
+
+/**
+ * Karena menggunakan css dataTables terbaru (1.10.19) alih-alih versi default
+ * (1.10.12). Maka perlu override label kembali keasal.
+ */
+div.dataTables_wrapper div.dataTables_filter label {
+    text-align:inherit;
+}
