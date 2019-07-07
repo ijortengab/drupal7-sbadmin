@@ -1,70 +1,95 @@
 <?php
 
 /**
+ * Memodifikasi main menu sehingga sesuai dengan behaviour dari SBAdmin2.
+ *
+ * Menu link yang memiliki bit `MENU_VISIBLE_IN_TREE` akan tidak muncul di tree
+ * meski dapat di-access dan parent expanded, jika parent TIDAK memiliki bit
+ * `MENU_VISIBLE_IN_TREE`.
+ *
+ * Contoh:
+ *     - LEVEL 1 A      MENU_NORMAL_ITEM
+ *       - LEVEL 2 A    MENU_DEFAULT_LOCAL_TASK
+ *         - LEVEL 3 A  MENU_DEFAULT_LOCAL_TASK
+ *         - LEVEL 3 B  MENU_LOCAL_TASK | MENU_NORMAL_ITEM
+ *         - LEVEL 3 C  MENU_LOCAL_TASK | MENU_NORMAL_ITEM
+ *       - LEVEL 2 B    MENU_LOCAL_TASK
+ *       - LEVEL 2 C    MENU_LOCAL_TASK
+ *     - LEVEL 1 B
+ *
+ * Pada contoh diatas, maka menu item `LEVEL 3B` dan `LEVEL 3C` tidak tampak
+ * pada tree menu, meski semua menu link dapat di access dan expanded.
+ *
+ * Yang terlihat adalah sebagai berikut:
+ *     - LEVEL 1 A      MENU_NORMAL_ITEM
+ *       - LEVEL 2 B    MENU_LOCAL_TASK
+ *       - LEVEL 2 C    MENU_LOCAL_TASK
+ *     - LEVEL 1 B
+ *
+ * Pada function `menu_rebuild()`, semua `type` yang tidak mengandung
+ * MENU_VISIBLE_IN_TREE (termasuk MENU_DEFAULT_LOCAL_TASK) maka akan diaktifkan
+ * property `hidden`.
+ * Kemudian function `menu_tree_output()`, akan menghapus link item yang terdapat
+ * property hidden aktif (yakni: menu item `LEVEL 2 A`) dan otomatis child-nya
+ * juga akan terhapus (yakni: menu item `LEVEL 3 B` dan `level 3C`) karena
+ * function tersebut recursive.
+ *
+ * Solusi untuk hal ini adalah membuat function baru menggantikan function
+ *  `menu_tree()`. Function `menu_tree()` menggunakan `menu_tree_page_data()`
+ * yang result-nya sudah meng-eliminir menu link dengan kondisi diatas.
+ * Kita akan menggunakan `menu_tree_all_data()` untuk mendapat semua menu link
+ * yang belum tereliminir. Kemudian menu link dengan type
+ * `MENU_DEFAULT_LOCAL_TASK` kita buat terlihat di menu tree dan di-modif
+ * agar menjadi toggle.
+ */
+function _sbadmin2_helper_block_view_system_main_menu_alter(&$data) {
+    ctools_include('utils', 'sbadmin2_helper');
+    $menu_name = 'main-menu';
+    $tree = menu_tree_all_data($menu_name);
+    _sbadmin2_helper_menu_tree_unhide_default_local_task($tree);
+    $tree = menu_tree_output($tree);
+    _sbadmin2_helper_menu_tree_modified_default_local_task($tree);
+    $data['content'] = $tree;
+}
+
+/**
+ * Meng-override nilai `hidden` pada setiap menu link ber-type
+ * `MENU_DEFAULT_LOCAL_TASK`.
+ */
+function _sbadmin2_helper_menu_tree_unhide_default_local_task(&$tree, &$parent = null) {
+    foreach ($tree as $i => $data) {
+        if ($parent !== null && isset($data['link']['type']) && !($data['link']['type'] & MENU_VISIBLE_IN_TREE) && ($data['link']['type'] & MENU_LINKS_TO_PARENT)) {
+            $tree[$i]['link']['hidden'] = 0;
+            $tree[$i]['link']['href'] = $parent['link']['href'];
+        }
+        _sbadmin2_helper_menu_tree_unhide_default_local_task($tree[$i]['below'], $tree[$i]);
+    }
+}
+
+/**
  * Memodifikasi main menu sehingga hook theme dari property #theme_wrappers
  * dari sebelumnya adalah `menu_tree__main_menu` menjadi `menu_tree__main_menu__level_x`.
  * Cara ini digunakan untuk memberikan class nav.nav-second-level dan
  * nav.nav-third-level pada main menu.
- * Menambah element list <li> tanpa link <a> dengan fungsi khusus on/off toggle
- * collapsed pada sub menu didalam list.
-*/
-function _sbadmin2_helper_main_menu_modified(&$data) {
-    ctools_include('utils', 'sbadmin2_helper');
-    _sbadmin2_helper_main_menu_modified_recursive($data['content']);
-}
-
-/**
- * Sub fungsi dari fungsi `_sbadmin2_helper_main_menu_modified`
- * untuk melakukan recursive sampai element terdalam.
+ *
+ * Memodifikasi menu link parent agar tidak menjadi link, dan membuatnya menjadi
+ * toggle untuk expand/collapse menu.
  */
-function _sbadmin2_helper_main_menu_modified_recursive(&$data, $level = 1, $cloned_menu_link = null) {
-    _sbadmin2_helper_utils_replace_theme_wrappers('menu_tree__main_menu', 'menu_tree__main_menu__level_' . $level, $data);
-    $childrens = element_children($data);
-    foreach ($childrens as $children) {
-        if ($data[$children]['#below']) {
-            $_cloned_menu_link = _sbadmin2_helper_main_menu_modified_clone_menu_link($children, $data[$children]);
-            _sbadmin2_helper_main_menu_modified_sanitize_origin_menu_link($data[$children]);
-            _sbadmin2_helper_main_menu_modified_recursive($data[$children]['#below'], ++$level, $_cloned_menu_link);
-            $level--; // Reset.
-        }
-    }
-    if ($cloned_menu_link !== null) {
-        $data = $cloned_menu_link + $data;
-    }
-}
-
-function _sbadmin2_helper_main_menu_modified_clone_menu_link($mlid, $element) {
-    // Clear children.
-    $element['#below'] = [];
-    // Ganti title, jika ada.
-    $path = $element['#href'];
-    $result = db_query('SELECT path FROM {menu_router} where type = :type AND path LIKE :path', [':type' => MENU_DEFAULT_LOCAL_TASK, ':path' => '%'.$path.'%'])->fetchCol();
-    if (!empty($result)) {
-        $found = null;
-        foreach ($result as $record) {
-            // Filter hanya pada link yang tepat satu level dibawah.
-            $regex = '/^'.str_replace('/',"\/",preg_quote($path))."\/[^\/]+$/";
-            if (preg_match($regex, $record)) {
-                $found = $record;
-                break;
+function _sbadmin2_helper_menu_tree_modified_default_local_task(&$tree, $level = 1, &$parent = null) {
+    _sbadmin2_helper_utils_replace_theme_wrappers('menu_tree__main_menu', 'menu_tree__main_menu__level_' . $level, $tree);
+    $childrens = element_children($tree);
+    foreach ($childrens as $mlid) {
+        if ($parent !== null && isset($tree[$mlid]['#original_link']['type']) && !($tree[$mlid]['#original_link']['type'] & MENU_VISIBLE_IN_TREE) && ($tree[$mlid]['#original_link']['type'] & MENU_LINKS_TO_PARENT)) {
+            $parent['#theme'] = 'menu_nolink';
+            $parent['#title'] .= ' <span class="fa arrow"></span>';
+            $parent['#localized_options']['html'] = true;
+            // Ganti li.active-trail menjadi li.active agar class .fa.arrow
+            // menyesuaikan arahnya menjadi kebawah.
+            if (in_array('active-trail', $parent['#attributes']['class'])) {
+                $key = array_search('active', $parent['#attributes']['class']);
+                $parent['#attributes']['class'][$key] = 'active';
             }
         }
-        if ($found !== null) {
-            $title = db_query('SELECT link_title from {menu_links} WHERE link_path = :found', [':found' => $found])->fetchCol();
-            $element['#title'] = array_shift($title);
-        }
-    }
-    return [$mlid => $element];
-}
-
-function _sbadmin2_helper_main_menu_modified_sanitize_origin_menu_link(&$element) {
-    $element['#theme'] = 'menu_nolink';
-    $element['#title'] .= ' <span class="fa arrow"></span>';
-    $element['#localized_options']['html'] = true;
-    // Ganti li.active-trail menjadi li.active agar class .fa.arrow
-    // menyesuaikan arahnya menjadi kebawah.
-    if (in_array('active-trail', $element['#attributes']['class'])) {
-        $key = array_search('active', $element['#attributes']['class']);
-        $element['#attributes']['class'][$key] = 'active';
+        _sbadmin2_helper_menu_tree_modified_default_local_task($tree[$mlid]['#below'], $level + 1, $tree[$mlid]);
     }
 }

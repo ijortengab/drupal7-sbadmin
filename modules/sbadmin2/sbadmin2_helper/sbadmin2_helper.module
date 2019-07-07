@@ -434,7 +434,7 @@ function sbadmin2_helper_block_view_system_main_menu_alter(&$data, $block) {
     if ($done === false) {
         $done = true;
         ctools_include('menu', 'sbadmin2_helper');
-        return _sbadmin2_helper_main_menu_modified($data);
+        return _sbadmin2_helper_block_view_system_main_menu_alter($data);
     }
 }
 
@@ -444,15 +444,10 @@ function sbadmin2_helper_block_view_system_main_menu_alter(&$data, $block) {
  * Melakukan modifikasi theme_wrappers dari main menu.
  */
 function sbadmin2_helper_block_view_system_user_menu_alter(&$data, $block) {
-    // ctools_include('menu', 'sbadmin2_helper');
-    // _sbadmin2_helper_main_menu_modified($data);
-    // return _sbadmin2_helper_main_menu_modified($data);
     global $user;
-    // $name =
     if ($user->uid) {
         $data['content']['2']['#title'] = $user->name;
     }
-
 }
 
 /**
