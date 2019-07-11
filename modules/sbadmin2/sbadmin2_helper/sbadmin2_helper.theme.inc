@@ -110,7 +110,6 @@ function theme_submit2($variables) {
     return isset($variables['element']['#value']) ? $variables['element']['#value'] : '';
 }
 
-
 function theme_icon($variables) {
     $element = $variables['element'];
     $bundle = isset($element['#bundle']) ? $element['#bundle'] : 'fontawesome';

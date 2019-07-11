@@ -1,6 +1,46 @@
 <?php
 
 /**
+ * Implements hook_js_alter().
+ */
+function sbadmin2_js_alter(&$javascript) {
+    // Javascript dibawah ini harus sebagai grup library.
+    $path = drupal_get_path('theme', 'sbadmin2');
+    $javascript[$path . '/vendor/twitter-bootstrap/3.3.7/js/bootstrap.min.js']['group'] = JS_LIBRARY;
+    $javascript[$path . '/vendor/select2/4.0.5/js/select2.min.js']['group'] = JS_LIBRARY;
+    $javascript[$path . '/vendor/metisMenu/1.1.3/metisMenu.min.js']['group'] = JS_LIBRARY;
+    // Pindahkan seluruh javascript ke footer.
+    foreach ($javascript as $key => &$value) {
+        $value['scope'] = 'footer';
+    }
+}
+
+function sbadmin2_css_alter(&$css) {
+    // CSS dibawah ini harus sebagai grup system.
+    $path = drupal_get_path('theme', 'sbadmin2');
+    $css[$path . '/vendor/twitter-bootstrap/3.3.7/css/bootstrap.min.css']['group'] = CSS_SYSTEM;
+    $css[$path . '/vendor/font-awesome/4.7.0/css/font-awesome.min.css']['group'] = CSS_SYSTEM;
+    $css[$path . '/vendor/select2/4.0.5/css/select2.min.css']['group'] = CSS_SYSTEM;
+    $css[$path . '/vendor/metisMenu/1.1.3/metisMenu.min.css']['group'] = CSS_SYSTEM;
+
+    // Replace CSS tertentu karena sulit dioverride.
+    $system = drupal_get_path('module', 'system') . '/system.theme.css';
+    if (isset($css[$system])) {
+        $system_takeover = $path . '/css/takeover/system.theme.css';
+        $css[$system_takeover] = $css[$system];
+        unset($css[$system]);
+    }
+    if (module_exists('date_api')) {
+        $date = drupal_get_path('module', 'date_api') . '/date.css';
+        if (isset($css[$date])) {
+            $date_takeover = $path . '/css/takeover/date.css';
+            $css[$date_takeover] = $css[$date];
+            unset($css[$date]);
+        }
+    }
+}
+
+/**
  * Implements hook_theme().
  */
 function sbadmin2_theme($existing, $type, $theme, $path) {
@@ -47,10 +87,8 @@ function sbadmin2_preprocess_block(&$variables) {
 function sbadmin2_preprocess_region(&$variables) {
 }
 
-
 function sbadmin2_preprocess_menu_link__user_menu(&$variables) {
 }
-
 
 function sbadmin2_preprocess_views_view_table(&$variables) {
     $variables['classes_array'][] = 'table';
@@ -88,7 +126,6 @@ function sbadmin2_menu_nolink(&$variables) {
     return '<li' . drupal_attributes($element['#attributes']) . '>' . $output . $sub_menu . "</li>\n";
 }
 
-
 function sbadmin2_unset_drupal_class(&$variables) {
     // $tempe = $variables['element'];
 
@@ -114,8 +151,6 @@ function sbadmin2_unset_drupal_class(&$variables) {
       unset($variables['element']['#attributes']['class'][$key]);
   }
 }
-
-// theme_menu_local_task($variables)
 
 function sbadmin2_menu_local_task($variables) {
   $link = $variables['element']['#link'];
@@ -156,7 +191,6 @@ function sbadmin2_menu_local_tasks(&$variables) {
   }
   return $output;
 }
-
 
 function sbadmin2_textfield($variables) {
   $element = $variables['element'];

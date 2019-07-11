@@ -271,47 +271,14 @@ function sbadmin2_helper_library_alter(&$libraries, $module) {
 }
 
 function sbadmin2_helper_css_alter(&$css) {
-    global $theme;
-    if ($theme !== 'sbadmin2') {
-        $path = drupal_get_path('module', 'sbadmin2_helper');
-        foreach ($css as $key => $value) {
-            if (strpos($key, $path) === 0) {
-                unset($css[$key]);
-            }
-        }
-        return;
-    }
-    // http://efaktur7/sites/all/modules/date/date_api/date.css?pn2jbj
-    unset($css[drupal_get_path('module', 'system') . '/system.theme.css']);
-    if (module_exists('date_api')) {
-        unset($css[drupal_get_path('module', 'date_api') . '/date.css']);
-    }
+
 }
 
 /**
  * Implements hook_js_alter().
  */
 function sbadmin2_helper_js_alter(&$javascript) {
-    global $theme;
-    if ($theme !== 'sbadmin2') {
-        $path = drupal_get_path('module', 'sbadmin2_helper');
-        foreach ($javascript as $key => $value) {
-            if (strpos($key, $path) === 0) {
-                unset($javascript[$key]);
-            }
-        }
-        return;
-    }
-    foreach ($javascript as $key => &$value) {
-        switch ($key) {
-            case 'settings':
-                $value['group'] = -1000;
-                $value['weight'] = -1000;
-            default:
-                $value['scope'] = 'footer';
-                break;
-        }
-    }
+
 }
 
 // Page Callback.
@@ -350,7 +317,6 @@ function sbadmin2_helper_dashboard_page_callback() {
     // todo: gunakan hook_alter pada custom module
     return 'Welcome.';
 }
-
 
 // Form Alter.
 
@@ -583,8 +549,6 @@ function sbadmin2_helper_js_callback_entityreference_autocomplete_single($args, 
   $json['content'] = '<p>My content</p>';
   return $json;
 }
-
-
 
 /**
  * Implements of hook_systemix_conditional_attached_library().

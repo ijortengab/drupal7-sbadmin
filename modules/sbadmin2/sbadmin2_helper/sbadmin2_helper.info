@@ -6,5 +6,4 @@ package = SB Admin 2
 dependencies[] = block
 dependencies[] = search
 dependencies[] = ctools
-dependencies[] = sbadmin2_library
-stylesheets[all][] = vendor/startbootstrap-sb-admin-2/3.3.7+1/css/sb-admin-2.css
+; dependencies[] = sbadmin2_library
