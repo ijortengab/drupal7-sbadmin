@@ -8,3 +8,113 @@
 ## Referensi
 
 https://startlaravel.com/themes/sb-admin-laravel-5/
+
+BACKUP CODE.
+<?php
+
+
+
+function sbadmin2_preprocess_menu_local_tasks(&$variables) {
+}
+
+function sbadmin2_preprocess_menu_local_task(&$variables) {
+}
+
+function sbadmin2_preprocess_menu_link(&$variables) {
+}
+
+function sbadmin2_preprocess_menu_tree(&$variables) {
+}
+
+function sbadmin2_preprocess_form(&$variables) {
+}
+
+function sbadmin2_preprocess_region(&$variables) {
+}
+
+function sbadmin2_preprocess_menu_link__user_menu(&$variables) {
+}
+
+function _sbadmin2_field_file($variables) {
+
+  /*
+  $output = '';
+
+  // Render the label, if it's not hidden.
+  if (!$variables['label_hidden']) {
+    $output .= '<div class="field-label"' . $variables['title_attributes'] . '>' . $variables['label'] . ':&nbsp;</div>';
+  }
+
+  // Render the items.
+  $output .= '<div class="field-items"' . $variables['content_attributes'] . '>';
+  foreach ($variables['items'] as $delta => $item) {
+    $classes = 'field-item ' . ($delta % 2 ? 'odd' : 'even');
+    $output .= '<div class="' . $classes . '"' . $variables['item_attributes'][$delta] . '>' . drupal_render($item) . '</div>';
+  }
+  $output .= '</div>';
+
+  // Render the top-level DIV.
+  $output = '<div class="' . $variables['classes'] . '"' . $variables['attributes'] . '>' . $output . '</div>';
+ */
+    // module_load_include();
+    $output = '';
+    if (!$variables['label_hidden']) {
+        $output .= '<label class="control-label col-lg-2"><span' . $variables['title_attributes'] . '>' . $variables['label'] . '</span></label>';
+    }
+    $value = [];
+
+    foreach ($variables['items'] as $delta => $item) {
+        $value[] = drupal_render($item);
+    }
+    $value = implode(', ', $value);
+    $value = strip_tags($value);
+
+    $output .= '<div class="col-lg-10">';
+    $output .= '<input class="form-control" type="text" readonly="readonly" value="'.$value.'">';
+    $output .= '</div>';
+    $output = '<div class="form-horizontal"><div class="form-group">' . $output . '</div></div>';
+
+
+  return $output;
+}
+
+
+function _sbadmin2_field_simple($variables) {
+  /*
+  $output = '';
+
+  // Render the label, if it's not hidden.
+  if (!$variables['label_hidden']) {
+    $output .= '<div class="field-label"' . $variables['title_attributes'] . '>' . $variables['label'] . ':&nbsp;</div>';
+  }
+
+  // Render the items.
+  $output .= '<div class="field-items"' . $variables['content_attributes'] . '>';
+  foreach ($variables['items'] as $delta => $item) {
+    $classes = 'field-item ' . ($delta % 2 ? 'odd' : 'even');
+    $output .= '<div class="' . $classes . '"' . $variables['item_attributes'][$delta] . '>' . drupal_render($item) . '</div>';
+  }
+  $output .= '</div>';
+
+  // Render the top-level DIV.
+  $output = '<div class="' . $variables['classes'] . '"' . $variables['attributes'] . '>' . $output . '</div>';
+ */
+    $output = '';
+    if (!$variables['label_hidden']) {
+        $output .= '<label class="control-label col-lg-2"><span' . $variables['title_attributes'] . '>' . $variables['label'] . '</span></label>';
+    }
+    $value = [];
+    foreach ($variables['items'] as $delta => $item) {
+        $value[] = drupal_render($item);
+    }
+    $value = implode(', ', $value);
+    $value = strip_tags($value);
+
+    $output .= '<div class="col-lg-10">';
+    $output .= '<input class="form-control" type="text" readonly="readonly" value="'.$value.'">';
+    $output .= '</div>';
+    $output = '<div class="form-horizontal"><div class="form-group">' . $output . '</div></div>';
+
+
+  return $output;
+}

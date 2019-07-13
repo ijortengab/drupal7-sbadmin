@@ -134,3 +134,10 @@ div.dataTables_wrapper div.dataTables_filter label {
 #side-menu.nav>li>a {
     padding: 10px 25px 15px 15px;
 }
+
+/**
+ * Logo dibuat fix tingginya.
+ */
+a.logo img {
+    height:29px;
+}

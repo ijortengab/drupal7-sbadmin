@@ -23,10 +23,6 @@ Drupal.behaviors.bootstrapButtonDropdowns = {
  * @todo: sort by weight.
  */
 Drupal.theme.prototype.bootstrapLinks = function (_variables, _replacement) {
-    // console.log('_replacement');
-    // console.log(_replacement);
-    // console.log('typeof _replacement');
-    // console.log(typeof _replacement);
     // Clone as new object.
     var variables = $.extend(true,{},_variables);
     // Default property.
@@ -108,8 +104,6 @@ Drupal.theme.prototype.bootstrapLinks = function (_variables, _replacement) {
     setAttribute($wrapper, variables.wrapper.attributes)
     // Visible.
     $.each(elementVisible, function (key, value) {
-        // console.log('value: ');
-        // console.log(value);
         var nodeElement = value.href ? "a" : "button";
         if (!value.title) {
             value.title = '';

@@ -26,8 +26,6 @@ Drupal.sbadmin2managedfile = function (input, upload, browse, info) {
         // kita, sehingga:
         // jika nilai this.value == '', berarti `file.js` menganggap input user
         // tidak valid.
-        var valx = this.value;
-        console.log(valx);
         if (! this.value == '') {
             // Reference: https://stackoverflow.com/a/18427347
             that.uploadButton.show().parent().append(that.uploadButton);
@@ -39,10 +37,6 @@ Drupal.sbadmin2managedfile = function (input, upload, browse, info) {
             that.uploadButton.hide();
             that.browseButton.show();
         }
-        // console.log($(this));
-        // console.log(this.value);
-        // this.css('opacity', 100)
     });
-    // console.log(this);
 }
 })(jQuery);

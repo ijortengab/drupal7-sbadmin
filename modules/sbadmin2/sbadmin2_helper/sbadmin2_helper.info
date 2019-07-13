@@ -6,4 +6,3 @@ package = SB Admin 2
 dependencies[] = block
 dependencies[] = search
 dependencies[] = ctools
-; dependencies[] = sbadmin2_library

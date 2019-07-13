@@ -5,12 +5,10 @@
 /**
  * Menyediakan variables $attributes dan $element untuk template.
  */
-function _template_preprocess_wrapper_common(&$variables, $class = null) {
+function _sbadmin2_preprocess_theme_wrapper_common(&$variables, $class = null) {
     $class === null or $variables['element']['#attributes']['class'][] = $class;
-    $variables['attributes'] = '';
-    // Variable $attributes akan diisi oleh template_process()
-    // melalui key attributes_array.
-    $variables['attributes_array'] = isset($variables['element']['#attributes']) ? $variables['element']['#attributes'] : [];
+    $variables['attributes'] = isset($variables['element']['#attributes']) ? $variables['element']['#attributes'] : [];
+    $variables['attributes'] = drupal_attributes($variables['attributes']);
     $variables['element'] = $variables['element']['#children'];
 }
 
@@ -20,8 +18,8 @@ function _template_preprocess_wrapper_common(&$variables, $class = null) {
  * @see template_preprocess()
  * @see template_process()
  */
-function template_preprocess_input_group(&$variables) {
-    _template_preprocess_wrapper_common($variables, 'input-group');
+function sbadmin2_preprocess_input_group(&$variables) {
+    _sbadmin2_preprocess_theme_wrapper_common($variables, 'input-group');
 }
 
 /**
@@ -30,8 +28,8 @@ function template_preprocess_input_group(&$variables) {
  * @see template_preprocess()
  * @see template_process()
  */
-function template_preprocess_input_group_button(&$variables) {
-    _template_preprocess_wrapper_common($variables, 'input-group-btn');
+function sbadmin2_preprocess_input_group_button(&$variables) {
+    _sbadmin2_preprocess_theme_wrapper_common($variables, 'input-group-btn');
 }
 
 /**
@@ -40,7 +38,8 @@ function template_preprocess_input_group_button(&$variables) {
  * @see template_preprocess()
  * @see template_process()
  */
-function template_preprocess_input_group_addon(&$variables) {
+function sbadmin2_preprocess_input_group_addon(&$variables) {
+    // return; //
     if (isset($variables['element']['#tooltip'])) {
         $variables['element']['#attributes']['data-toggle'] = 'tooltip';
         $tooltip = $variables['element']['#tooltip'];
@@ -48,20 +47,22 @@ function template_preprocess_input_group_addon(&$variables) {
         empty($tooltip['title']) or $variables['element']['#attributes']['title'] = $tooltip['title'];
         empty($tooltip['placement']) or $variables['element']['#attributes']['data-placement'] = $tooltip['placement'];
     }
-    _template_preprocess_wrapper_common($variables, 'input-group-addon');
+    _sbadmin2_preprocess_theme_wrapper_common($variables, 'input-group-addon');
+
 }
 
 /**
  * Implements template_preprocess_HOOK() for theme_sbadmin2_form_element().
  * @see: template_preprocess_menu_tree()
  */
-function template_preprocess_form_element2(&$variables) {
+function sbadmin2_preprocess_form_element2(&$variables) {
+    // return;
     $variables['#element'] = $variables['element'];
     $variables['element'] = $variables['element']['#children'];
     $variables['description'] = isset($variables['#element']['#description']) ? $variables['#element']['#description'] : '';
 }
 
-function template_preprocess_submit3(&$variables) {
+function sbadmin2_preprocess_submit3(&$variables) {
     $element = &$variables['element'];
     $element['#attributes']['type'] = 'submit';
     element_set_attributes($element, array('id', 'name', 'value'));
@@ -79,13 +80,13 @@ function template_preprocess_submit3(&$variables) {
         $element['#attributes']['type'] = 'button';
         unset($element['#attributes']['name']);
     }
-    _template_preprocess_wrapper_common($variables);
+    _sbadmin2_preprocess_theme_wrapper_common($variables);
 }
 
 /**
  *
  */
-function theme_textfield2($variables) {
+function sbadmin2_textfield2($variables) {
     $variables['element']['#attributes']['class'][] = 'form-control';
     if (isset($variables['element']['#title'])) {
         $variables['element']['#attributes']['placeholder'] = $variables['element']['#title'];
@@ -97,7 +98,7 @@ function theme_textfield2($variables) {
 /**
  *
  */
-function theme_password2($variables) {
+function sbadmin2_password2($variables) {
     $variables['element']['#attributes']['class'][] = 'form-control';
     if (isset($variables['element']['#title'])) {
         $variables['element']['#attributes']['placeholder'] = $variables['element']['#title'];
@@ -106,11 +107,11 @@ function theme_password2($variables) {
     return theme_password($variables);
 }
 
-function theme_submit2($variables) {
+function sbadmin2_submit2($variables) {
     return isset($variables['element']['#value']) ? $variables['element']['#value'] : '';
 }
 
-function theme_icon($variables) {
+function sbadmin2_icon($variables) {
     $element = $variables['element'];
     $bundle = isset($element['#bundle']) ? $element['#bundle'] : 'fontawesome';
     $icon = isset($element['#icon']) ? $element['#icon'] : '';
@@ -133,4 +134,16 @@ function theme_icon($variables) {
             break;
     }
     return '<span aria-hidden="true"' . drupal_attributes($attributes) . '></span>';
+}
+
+function sbadmin2_menu_nolink(&$variables) {
+    sbadmin2_utils::remove_drupal_class($variables['element']);
+    $element = $variables['element'];
+    $sub_menu = '';
+    if ($element['#below']) {
+        $sub_menu = drupal_render($element['#below']);
+    }
+    $element['#localized_options']['external'] = true;
+    $output = l($element['#title'], 'javascript:void(0)', $element['#localized_options']);
+    return '<li' . drupal_attributes($element['#attributes']) . '>' . $output . $sub_menu . "</li>\n";
 }

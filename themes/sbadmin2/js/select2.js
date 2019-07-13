@@ -3,7 +3,6 @@
 Drupal.sbadmin2 = Drupal.sbadmin2 || {};
 
 Drupal.sbadmin2.parseAutocompleteValue = function (i) {
-    // console.log(i);
     // Hapus double quote yang mungkin ada, jika terdapat karakter comma atau
     // kurung.
     i = i.replace(/^"/,'');
@@ -12,7 +11,6 @@ Drupal.sbadmin2.parseAutocompleteValue = function (i) {
     var match = myRegexp.exec(i)
     var result = []
     if (match && match.length == 3) {
-        console.log(match);
         return {id: match[0], text: match[1]}
     }
 }
@@ -20,8 +18,6 @@ Drupal.sbadmin2.parseAutocompleteValue = function (i) {
 Drupal.behaviors.sbadmin2select2 = {
   attach: function (context, settings) {
     $('select.sbadmin2-select2', context).once('sbadmin2-select2', function () {
-        // console.log(settings);
-        // console.log(this);
         // return;
         var options = settings.sbadmin2.defaultOptions;
         if (typeof settings.sbadmin2.element[this.id] !== 'undefined') {
@@ -37,11 +33,9 @@ Drupal.behaviors.sbadmin2select2 = {
                         return query;
                     },
                     processResults: function (data) {
-                        console.log(data);
                         var obj = {results: []}
                         for (i in data){
                             var result = Drupal.sbadmin2.parseAutocompleteValue(i)
-                            console.log(result);
                             if (typeof result == 'object') {
                                 obj.results.push({id: result.id, text: result.text})
                             }
@@ -59,7 +53,6 @@ Drupal.behaviors.sbadmin2select2 = {
                 options = $.extend(options, settings.sbadmin2.element[id].defaultOptions);
             }
             // Run select2.
-            // console.log(options);
             $(this).select2(options);
 
             // Tambah default value jika form rebuild karena (salahsatunya) error.
