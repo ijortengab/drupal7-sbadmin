@@ -1,0 +1,9 @@
+name = SBAdmin2 Timeago
+description = Integrasi jquery timeago dengan SBAdmin2
+core = 7.x
+version = 0.1.0
+package = SBAdmin2
+dependencies[] = sbadmin2_helper
+files[] = sbadmin2_timeago_handler_field_date.inc
+files[] = sbadmin2_timeago_handler_field_field_datetime.inc
+files[] = sbadmin2_timeago_handler_theme_timeago.inc

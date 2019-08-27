@@ -1,38 +1,24 @@
 <?php
 
 /**
- * @file sbadmin2.inc
+ * @file sbadmin2.theme_override.inc
  *
- * Collection of theme function override and preprocess theme.
+ * Override theme functions that provided by Drupal Core or Contributed Module.
  */
 
 /**
- * Preprocessor for template node_form.
+ * Implements of #theme: `menu_link__user_menu`.
+ * @see: menu_tree_output().
  */
-function sbadmin2_preprocess_node_form(&$variables) {
-    hide($variables['form']['actions']);
-    hide($variables['form']['additional_settings']);
-}
-
-function sbadmin2_preprocess_views_view_table(&$variables) {
-    $variables['classes_array'][] = 'table';
-    $variables['classes_array'][] = 'table-striped';
-    $variables['classes_array'][] = 'table-bordered';
-    $variables['classes_array'][] = 'table-hover';
-}
-
-function sbadmin2_preprocess_table(&$variables) {
-    $variables['attributes']['class'][] = 'table';
-    $variables['attributes']['class'][] = 'table-striped';
-    $variables['attributes']['class'][] = 'table-bordered';
-    $variables['attributes']['class'][] = 'table-hover';
-}
-
 function sbadmin2_menu_link__user_menu(&$variables) {
     sbadmin2_utils::remove_drupal_class($variables['element']);
     return theme_menu_link($variables);
 }
 
+/**
+ * Implements of #theme: `menu_link__main_menu`.
+ * @see: menu_tree_output().
+ */
 function sbadmin2_menu_link__main_menu(&$variables) {
     sbadmin2_utils::remove_drupal_class($variables['element']);
     return theme_menu_link($variables);
@@ -113,14 +99,13 @@ function sbadmin2_textfield($variables) {
 /**
  * Override theme_form_element().
  *
- * Menghapus class .form-item,
- * Ini otomatis mengubah file CSS system.theme.css
- * sehingga tidak diperlukan lagi class .form-item
- * Contoh:
- * .form-item input.error, .form-item textarea.error, .form-item select.error
- * Menambah class .form-group
- * Mengubah class .description menjadi .help-block
- * Menambah dukungan terhadap form-horizontal.
+ * - Menghapus class .form-item.
+ *   Ini otomatis mengubah file CSS system.theme.css sehingga tidak diperlukan
+ *   lagi class .form-item. Contoh: .form-item input.error,
+ *   .form-item textarea.error, .form-item select.error
+ * - Menambah class `.form-group`
+ * - Mengubah class `.description` menjadi `.help-block`
+ * - Menambah dukungan terhadap form-horizontal.
  */
 function sbadmin2_form_element($variables) {
   $element = &$variables['element'];
@@ -302,6 +287,8 @@ function sbadmin2_button($variables) {
   return '<input' . drupal_attributes($element['#attributes']) . ' />';
 }
 
+// Obselete.
+// todo, convert to formatter.
 function sbadmin2_preprocess_field(&$variables) {
     // todo.
     // - jika simple field. cardinality = 1 dan type text.
@@ -310,6 +297,8 @@ function sbadmin2_preprocess_field(&$variables) {
     // jika selain itu, maka kembalikan ke design semula.
     // yakni theme_field.
     $element = $variables['element'];
+    $field_type = $element['#field_type'];
+
     switch ($element['#field_type']) {
         case 'text':
         // case 'entityreference':
@@ -327,7 +316,8 @@ function sbadmin2_preprocess_field(&$variables) {
     }
 }
 
-
+// Obselete.
+// todo, convert to formatter.
 function sbadmin2_field($variables) {
     switch ($variables['sbadmin2_variant']) {
         case 'simple':
@@ -338,6 +328,8 @@ function sbadmin2_field($variables) {
     }
 }
 
+// Obselete.
+// todo, convert to formatter.
 function _sbadmin2_field_simple($variables) {
     $output = '';
     if (!$variables['label_hidden']) {
@@ -357,6 +349,8 @@ function _sbadmin2_field_simple($variables) {
     return $output;
 }
 
+// Obselete.
+// todo, convert to formatter.
 function _sbadmin2_field_file($variables) {
     $output = '';
     if (!$variables['label_hidden']) {
@@ -376,62 +370,3 @@ function _sbadmin2_field_file($variables) {
     return $output;
 }
 
-
-/**
- * Implements hook_preprocess_HOOK().
- * Preprocess theme `link`.
- */
-function sbadmin2_preprocess_link(&$variables) {
-
-    // return;
-    if (!empty($variables['options']) && !empty($variables['options']['sbadmin2_icon'])) {
-        $variables['options']['html'] = TRUE;
-        $variables['text'] = '<i class="fa fa-'. check_plain($variables['options']['sbadmin2_icon']) . ' fa-fw"></i> ' . $variables['text'];
-    }
-}
-
-/**
- * Implements of hook_preprocess_HOOK().
- *
- * Preprocess theme_hook `page`.
- *
- * Mematikan $messages pada template page pada route `/sbadmin2-login` karena
- * variable tersebut akan digunakan pada template `block__user__login`.
- *
- * @see template_preprocess_page.
- */
-function sbadmin2_preprocess_page(&$variables) {
-    if (current_path() == 'sbadmin2-login') {
-        $variables['show_messages'] = false;
-    }
-}
-
-/**
- * Implements of hook_preprocess_HOOK().
- *
- * Preprocess theme_hook `block`.
- *
- * Menambah variable $messages ke template block--user--login.tpl.
- */
-function sbadmin2_preprocess_block(&$variables) {
-    if ($variables['block']->module == 'user' && $variables['block']->delta == 'login') {
-        $variables['messages'] = theme('status_messages');
-    }
-}
-
-/**
- * Implements hook_preprocess_html().
- *
- * Memberikan informasi meta viewport.
- */
-function sbadmin2_preprocess_html(&$variables) {
-    $html_tag = array(
-      '#type' => 'html_tag',
-      '#tag' => 'meta',
-      '#attributes' => array(
-        'name' => 'viewport',
-        'content' => 'width=device-width, initial-scale=1',
-      ),
-    );
-    drupal_add_html_head($html_tag, 'viewport');
-}

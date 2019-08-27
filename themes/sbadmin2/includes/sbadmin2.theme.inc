@@ -1,16 +1,16 @@
 <?php
 
-// Theme Wrapper.
+// Preprocess Theme.
 
 /**
- * Menyediakan variables $attributes dan $element untuk template.
+ * Implements hook_preprocess_HOOK(). Preprocess theme `node_form`.
  */
-function _sbadmin2_preprocess_theme_wrapper_common(&$variables, $class = null) {
-    $class === null or $variables['element']['#attributes']['class'][] = $class;
-    $variables['attributes'] = isset($variables['element']['#attributes']) ? $variables['element']['#attributes'] : [];
-    $variables['attributes'] = drupal_attributes($variables['attributes']);
-    $variables['element'] = $variables['element']['#children'];
+function sbadmin2_preprocess_node_form(&$variables) {
+    hide($variables['form']['actions']);
+    hide($variables['form']['additional_settings']);
 }
+
+// Preprocess Theme Wrapper.
 
 /**
  * Implements template_preprocess_HOOK().
@@ -19,7 +19,7 @@ function _sbadmin2_preprocess_theme_wrapper_common(&$variables, $class = null) {
  * @see template_process()
  */
 function sbadmin2_preprocess_input_group(&$variables) {
-    _sbadmin2_preprocess_theme_wrapper_common($variables, 'input-group');
+    sbadmin2_utils::preprocess_theme_wrapper($variables, 'input-group');
 }
 
 /**
@@ -29,7 +29,7 @@ function sbadmin2_preprocess_input_group(&$variables) {
  * @see template_process()
  */
 function sbadmin2_preprocess_input_group_button(&$variables) {
-    _sbadmin2_preprocess_theme_wrapper_common($variables, 'input-group-btn');
+    sbadmin2_utils::preprocess_theme_wrapper($variables, 'input-group-btn');
 }
 
 /**
@@ -39,7 +39,6 @@ function sbadmin2_preprocess_input_group_button(&$variables) {
  * @see template_process()
  */
 function sbadmin2_preprocess_input_group_addon(&$variables) {
-    // return; //
     if (isset($variables['element']['#tooltip'])) {
         $variables['element']['#attributes']['data-toggle'] = 'tooltip';
         $tooltip = $variables['element']['#tooltip'];
@@ -47,8 +46,7 @@ function sbadmin2_preprocess_input_group_addon(&$variables) {
         empty($tooltip['title']) or $variables['element']['#attributes']['title'] = $tooltip['title'];
         empty($tooltip['placement']) or $variables['element']['#attributes']['data-placement'] = $tooltip['placement'];
     }
-    _sbadmin2_preprocess_theme_wrapper_common($variables, 'input-group-addon');
-
+    sbadmin2_utils::preprocess_theme_wrapper($variables, 'input-group-addon');
 }
 
 /**
@@ -80,8 +78,10 @@ function sbadmin2_preprocess_submit3(&$variables) {
         $element['#attributes']['type'] = 'button';
         unset($element['#attributes']['name']);
     }
-    _sbadmin2_preprocess_theme_wrapper_common($variables);
+    sbadmin2_utils::preprocess_theme_wrapper($variables);
 }
+
+// Theme function.
 
 /**
  *

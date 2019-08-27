@@ -45,4 +45,17 @@ class sbadmin2_utils
             }
         }
     }
+
+    /**
+     * Common Preprocess for theme_wrapper.
+     * - Menyediakan variables $attributes dan $element untuk template.
+     * - Menambah class dengan cepat.
+     */
+    public static function preprocess_theme_wrapper(&$variables, $additional_class = null)
+    {
+        $additional_class === null or $variables['element']['#attributes']['class'][] = $additional_class;
+        $variables['attributes'] = isset($variables['element']['#attributes']) ? $variables['element']['#attributes'] : [];
+        $variables['attributes'] = drupal_attributes($variables['attributes']);
+        $variables['element'] = $variables['element']['#children'];
+    }
 }

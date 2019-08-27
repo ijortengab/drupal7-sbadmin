@@ -1,6 +1,8 @@
 <?php
 
-// Drupal Hook.
+define('SBADMIN_HELPER_DATATABLES_REFERENCES_SOURCE', 'https://datatables.net/examples/data_sources/');
+
+// Drupal and Module Hook.
 
 /**
  * Implements of hook_menu();
@@ -35,12 +37,9 @@ function sbadmin2_helper_menu() {
 }
 
 /**
- * Adds our extra option to the field widget settings form.
- *
- * eg at
- * /admin/structure/types/manage/{CONTENT_TYPE}/fields/{ENTITYREFERENCE_FIELD}
- *
  * Implements hook_form_FORMID_alter().
+ *
+ * Adds our extra option to the field widget settings form.
  */
 function sbadmin2_helper_form_field_ui_field_edit_form_alter(&$form, $form_state) {
     $supported_widgets = array(
@@ -72,21 +71,87 @@ function sbadmin2_helper_form_field_ui_field_edit_form_alter(&$form, $form_state
  * Support select2 dan entityconnect.
  */
 function sbadmin2_helper_field_widget_form_alter(&$element, &$form_state, $context) {
-
     if ($context['field']['type'] == 'entityreference') {
         // Support for library select2.
         if (!empty($context['instance']['widget']['settings']['sbadmin2_helper']['select2_convert'])) {
             $element['target_id']['#sbadmin2_select2'] = true;
         }
+
         //  Support for module entityconnect.
         $supported_widgets = array(
             'entityreference_autocomplete',
             'entityreference_autocomplete_tags',
         );
         if (module_exists('entityconnect') && in_array($context['instance']['widget']['type'], $supported_widgets)) {
+            // Give toggle to allow custom module ignore sbadmin2 via
+            // hook_form_alter().
+            $element['#sbadmin2'] = true;
             $element['#pre_render'][] = 'sbadmin2_element_pre_render_entityconnect';
         }
     }
+}
+
+/**
+ * Implements hook_library().
+ */
+function sbadmin2_helper_library() {
+    $path = drupal_get_path('module', 'sbadmin2_helper');
+    $libraries['sbadmin2_helper.rewrite'] = [
+        'title' => 'SBAdmin2 Helper Rewrite',
+        'website' => 'https://github.com/ijortengab/drupal7-sbadmin2',
+        'version' => '1.0.0',
+        'js' => [
+            $path.'/js/sbadmin2_helper_rewrite.js' => [
+                'group' => JS_THEME,
+            ],
+        ],
+    ];
+    $libraries['sbadmin2_helper.themes'] = [
+        'title' => 'SBAdmin2 Helper Themes',
+        'website' => 'https://github.com/ijortengab/drupal7-sbadmin2',
+        'version' => '1.0.0',
+        'js' => [
+            $path.'/js/sbadmin2_helper_themes.js' => [
+                'group' => JS_THEME,
+            ],
+        ],
+        'dependencies' => [
+            ['themejs', 'themejs.theme'],
+        ],
+    ];
+    return $libraries;
+}
+
+/**
+ * Implements of hook_themejs().
+ */
+function sbadmin2_helper_themejs() {
+    $items['empty_string'] = [
+        'title' => 'Empty String',
+        'description' => 'A simple way to remove entire data in columns.',
+        'library' => ['sbadmin2_helper.themes'],
+    ];
+    $items['stronger'] = [
+        'title' => 'Stronger',
+        'description' => 'Be <strong>Bold</strong>. Wrap data with strong element.',
+        'library' => ['sbadmin2_helper.themes'],
+    ];
+    $items['random'] = [
+        'title' => 'Random Text',
+        'description' => 'Rewrite data column with random text.',
+        'library' => ['sbadmin2_helper.themes'],
+        'handler' => 'sbadmin2_helper_handler_theme_random',
+    ];
+    $items['bootstrap_links'] = [
+        'title' => 'Bootstrap Links',
+        'description' => t('Turn <em>CTools Dropdown links</em> into <a href="!url"><em>Bootstrap Button dropdowns</em></a>.', ['!url' => 'https://getbootstrap.com/docs/3.3/components/#btn-dropdowns']),
+        'library' => ['sbadmin2_helper.themes'],
+        'available' => [
+            'sbadmin2_helper_handler_field_ctools_dropdown'
+        ],
+        'handler' => 'sbadmin2_helper_handler_theme_bootstrap_links',
+    ];
+    return $items;
 }
 
 // Page Callback.
@@ -130,6 +195,7 @@ function sbadmin2_helper_dashboard_page_callback() {
 /**
  * Implements of hook_form_FORM_ID_alter().
  *
+ * Tambah field icon pada halaman admininster menu.
  */
 function sbadmin2_helper_form_menu_edit_item_alter(&$form, &$form_state) {
     // Unset the previous value so that the new values get saved.
@@ -160,25 +226,261 @@ function sbadmin2_helper_form_system_site_information_settings_alter(&$form, &$f
     $form['front_page']['site_frontpage']['#description'] .= ' '. t('<strong>This value take over by sbadmin2_helper module</strong>.');
 }
 
-/**
- * Implements of hook_js_info().
- */
-function sbadmin2_helper_js_info() {
-    $callbacks['entityreference_autocomplete_single'] = array();
-    return $callbacks;
-}
-
-function sbadmin2_helper_js_callback_entityreference_autocomplete_single($args, $data) {
-  $json = array();
-  $json['content'] = '<p>My content</p>';
-  return $json;
-}
+// Views.
 
 /**
- * Implements of hook_systemix_conditional_attached_library().
+ * Implements hook_views_api().
  */
-function sbadmin2_helper_systemix_conditional_attached_library() {
+function sbadmin2_helper_views_api() {
     return [
-        'sbadmin2_helper' => ['sbadmin2', 'sbadmin2.managed_file'],
+        'api' => 3.0,
     ];
+}
+
+/**
+ * @param mixed $mixed
+ *   Dapat berupa $form_state, $view_plugin, $view_handler atau
+ *   $view itu sendiri.
+ */
+function sbadmin2_helper_is_views_display_table($mixed) {
+    if (isset($mixed->view)) {
+        $view = $mixed->view;
+    }
+    elseif (isset($mixed['view'])) {
+        $view = $mixed['view'];
+    }
+    elseif ((new ReflectionClass($mixed))->name == 'view') {
+        $view = $mixed;
+    }
+    return (isset($view)) ? ($view->display[$view->current_display]->display_options['style_plugin'] == 'table') : false;
+}
+
+/**
+ * Implements of hook_views_plugin_option_definition_alter().
+ *
+ * Menambah definition pada class views_plugin_style_table agar nanti dapat di
+ * save pada form settings style table.
+ */
+function sbadmin2_helper_views_plugin_option_definition_alter(&$definition, $handler) {
+    if ($handler instanceof views_plugin_style_table) {
+        $definition['sbadmin2'] = ['default' => []];
+    }
+}
+
+/**
+ * Implements of hook_form_FORM_ID_alter().
+ *
+ * Menambah form element pada setting style table.
+ */
+function sbadmin2_helper_form_views_ui_edit_display_form_alter(&$form, &$form_state) {
+    switch ($form_state['section']) {
+        case 'style_options':
+            if (sbadmin2_helper_is_views_display_table($form_state)) {
+                $that = $form_state['view']->display[$form_state['display_id']];
+                $form['options']['style_options']['sbadmin2'] = [
+                    '#type' => 'fieldset',
+                    '#title' => t('SBAdmin2'),
+                    '#collapsible' => true,
+                    '#tree' => true,
+                ];
+                $form['options']['style_options']['sbadmin2']['datatables_convert'] = [
+                    '#type' => 'checkbox',
+                    '#title' => t('Convert to Datatables'),
+                    '#description' => t('This will convert to datatables.'),
+                    '#default_value' => isset($that->display_options['style_options']['sbadmin2']['datatables_convert']) ? $that->display_options['style_options']['sbadmin2']['datatables_convert'] : 0,
+                ];
+                $form['options']['style_options']['sbadmin2']['datatables_source'] = [
+                    '#type' => 'radios',
+                    '#title' => t('Data Source'),
+                    '#options' => ['html' => 'HTML (DOM)', 'js' => 'Javascript (JSON)'],
+                    '#description' => t('Data source to populate the table data. <a href="!link">Learn More.</a>', ['!link' => SBADMIN_HELPER_DATATABLES_REFERENCES_SOURCE]),
+                    '#default_value' => isset($that->display_options['style_options']['sbadmin2']['datatables_source']) ? $that->display_options['style_options']['sbadmin2']['datatables_source'] : 'html',
+                    '#states' => [
+                        'visible' => [
+                            ':input[name="style_options[sbadmin2][datatables_convert]"]' => ['checked' => true],
+                        ],
+                    ],
+                ];
+            }
+            break;
+    }
+}
+
+/**
+ * Implements of hook_views_handler_option_definition_alter().
+ */
+function sbadmin2_helper_views_handler_option_definition_alter(&$definition, $handler) {
+}
+
+/**
+ * Implements of hook_form_FORM_ID_alter().
+ */
+function sbadmin2_helper_form_views_ui_config_item_form_alter(&$form, &$form_state) {
+}
+
+/**
+ * Implements hook_views_ajax_data_alter().
+ */
+function sbadmin2_helper_views_ajax_data_alter(&$commands, $view) {
+    if (sbadmin2_helper_is_views_display_table($view)) {
+        $style_options = $view->display[$view->current_display]->display_options['style_options'];
+        if (isset($style_options['sbadmin2']['datatables_convert']) && $style_options['sbadmin2']['datatables_convert']) {
+            $commands[] = [
+                'command' => 'sbadmin2DatatablesRedraw',
+                'key' => $view->dom_id,
+            ];
+        }
+    }
+}
+
+/**
+ * Implements of hook_ajax_render_alter().
+ */
+function sbadmin2_helper_ajax_render_alter(&$commands) {
+    // Pindahkan informasi setting-nya sbadmin2, dari posisi semula yakni
+    // command `settings` menjadi command `sbadmin2DatatablesRedraw`.
+    // menjadi bagiaL_exists['settings']]['settings']['sbadmin2']['views']['datatables'][$dom_id];
+    $is_exists = [];
+    foreach ($commands as $key => $value) {
+        if (isset($value['settings']['sbadmin2']['views'])) {
+            $is_exists['settings'] = $key;
+        }
+        elseif (isset($value['command']) && $value['command'] == 'sbadmin2DatatablesRedraw') {
+            $is_exists['command'] = $key;
+        }
+    }
+    if (isset($is_exists['settings']) && isset($is_exists['command'])) {
+        $s = $is_exists['settings'];
+        $c = $is_exists['command'];
+        $views_key = $commands[$c]['key'];
+        foreach ($commands[$s]['settings']['sbadmin2']['views'] as $key => $value) {
+            if (isset($value[$views_key])) {
+                $commands[$c]['settings']['sbadmin2']['views'][$key] = $value;
+                unset($commands[$s]['settings']['sbadmin2']['views'][$key]);
+            }
+        }
+    }
+}
+
+/**
+ * Preprocess for template views_view_table.
+ *
+ * Sebelumnya, function template_preprocess_views_view_table(), melakukan
+ * hal sebagai berikut:
+ *
+ *  - Menambah variables:
+ *    ```
+ *    $result
+ *    $field_classes
+ *    $header
+ *    $fields
+ *    $header_classes
+ *    $field_attributes
+ *    $row_classes
+ *    $caption
+ *    ```
+ *
+ *  - Modifikasi $rows. Contoh:
+ *    Sebelumnya:
+ *    ```
+ *    array(3) {
+ *      [0]=>  object(stdClass)#169 (2) {
+ *        ["nid"]=> string(4) "1899"
+ *        ["node_created"]=> string(10) "1555386900"
+ *      }
+ *      [1]=> ...
+ *      [2]=> ...
+ *    }
+ *    ```
+ *    Menjadi:
+ *    ```
+ *    array(3) {
+ *      [0]=> array(7) {
+ *        ["counter"]=> string(1) "1"
+ *        ["nid"]=> string(4) "1899"
+ *        ["custom_nomor_faktur_baru_dipakai"]=> string(15) "003-19.47398596"
+ *        ["custom_nomor_faktur_sisa"]=> string(2) "24"
+ *        ["created"]=> string(25) "2019-04-16T10:55:00+07:00"
+ *      }
+ *      [1]=> ...
+ *      [2]=> ...
+ *    ```
+ *
+ * Function ini akan melakukan @todo.
+ * $todo, ada checklist pada class untuk auto add class contoh:
+ * table-striped table-bordered table-hover.
+ */
+function sbadmin2_helper_preprocess_views_view_table(&$variables) {
+    $view = $variables['view'];
+    $style_options = $view->style_plugin->options;
+    $handler = $view->style_plugin;
+
+    $variables['json'] = [];
+    $variables['settings'] = [];
+
+    $header = $variables['header'];
+    $rows = $variables['rows'];
+    $views_key = $view->dom_id;
+
+    // Play with Datatables.
+    $datatables_convert = (isset($style_options['sbadmin2']['datatables_convert']) && $style_options['sbadmin2']['datatables_convert']);
+    $datatables_source = isset($style_options['sbadmin2']['datatables_source']) ? $style_options['sbadmin2']['datatables_source'] : 'html';
+
+    $col_index = 0;
+    // Play with Header, Rewrite Columns, and Multivalue Columns.
+    foreach (array_keys($header) as $field) {
+        $field_handler = $view->field[$field];
+
+        $field_options = $field_handler->options;
+        if ($datatables_convert && $datatables_source == 'js') {
+            $variables['json']['columns'][] = ['title' => $header[$field]];
+        }
+        // Play with Rewrite Columns.
+        if (!empty($field_options['sbadmin2']['rewrite']) && !empty($field_options['sbadmin2']['theme_selected'])) {
+            $theme = $field_options['sbadmin2']['theme_selected'];
+            $theme_options = isset($field_options['sbadmin2']['themes'][$theme]['options']) ? $field_options['sbadmin2']['themes'][$theme]['options']: [];
+            $rewrite = [
+                'column' => $col_index,
+                'theme' => $theme,
+                'options' => $theme_options,
+            ];
+            if ($datatables_convert) {
+                $variables['settings']['sbadmin2']['views']['datatables'][$views_key]['rewrite'][] = $rewrite;
+            }
+            else {
+                $variables['settings']['sbadmin2']['views']['rewrite'][$views_key][] = $rewrite;
+                drupal_add_library('sbadmin2_helper', 'sbadmin2_helper.rewrite');
+            }
+            if (isset(themejs_info($theme)['library'])) {
+                $themejs_info = themejs_info($theme);
+                $libraries = (array) $themejs_info['library'];
+                foreach ($libraries as $library) {
+                    drupal_add_library($themejs_info['module'], $library);
+                }
+            }
+
+        }
+        $col_index++;
+    }
+
+    // Play with Rows.
+    foreach ($rows as $count => $row) {
+        // Play with Multivalue Columns.
+        $view->row_index = $count;
+        $raw = $view->result[$count];
+
+        $col_index = 0;
+        foreach (array_keys($row) as $field) {
+            // Value dalam column dalam bentuk array, maka perlu kita lempar
+            // value tersebut melalui Drupal.settings.
+            if (isset($view->rendered_fields_array[$count][$field]) && is_array($view->rendered_fields_array[$count][$field])) {
+                $variables['settings']['sbadmin2']['views']['multivalue'][$views_key][$count][$col_index] = $view->rendered_fields_array[$count][$field];
+            }
+            $col_index++;
+        }
+        if ($datatables_convert && $datatables_source == 'js') {
+            $variables['json']['data'][] = array_values($variables['rows'][$count]);
+        }
+    }
+    unset($view->row_index);
 }

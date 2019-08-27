@@ -1,0 +1,57 @@
+<?php
+
+function sbadmin2_timeago_return(\DateTime $date, $render = null) {
+    $render = ($render === null) ? $date->format('r') : $render;
+    return [
+        $date->format('c'),
+        $render,
+    ];
+}
+
+/**
+ * Implements of hook_views_api().
+ */
+function sbadmin2_timeago_views_api() {
+    return [
+        'api' => 3.0,
+    ];
+}
+
+/**
+ * Implements of hook_library().
+ */
+function sbadmin2_timeago_library() {
+    $path = drupal_get_path('module', 'sbadmin2_timeago');
+    $libraries['sbadmin2_timeago.timeago'] = [
+        'title' => 'SBAdmin2 Timeago',
+        'website' => 'https://github.com/ijortengab/drupal7-sbadmin2',
+        'version' => '1.0.0',
+        'js' => [
+            $path.'/js/sbadmin2_timeago.js' => [
+                'group' => JS_THEME,
+            ],
+        ],
+        'dependencies' => [
+            ['sbadmin2', 'sbadmin2.timeago'],
+            ['sbadmin2', 'sbadmin2.tooltip'],
+        ],
+    ];
+    return $libraries;
+}
+
+/**
+ * Implements of hook_themejs().
+ */
+function sbadmin2_timeago_themejs() {
+    $items['timeago'] = [
+        'title' => 'Timeago',
+        'description' => 'Turn print date to realtime auto adjust timeago.',
+        'available' => [
+            'sbadmin2_timeago_handler_field_date',
+            'sbadmin2_timeago_handler_field_field_datetime'
+        ],
+        'handler' => 'sbadmin2_timeago_handler_theme_timeago',
+        'library' => ['sbadmin2_timeago.timeago'],
+    ];
+    return $items;
+}

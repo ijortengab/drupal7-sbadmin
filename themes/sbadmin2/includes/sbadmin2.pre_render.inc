@@ -233,11 +233,7 @@ function _sbadmin2_element_pre_render_entityconnect($element) {
         return $element;
     }
     $element['target_id']['#weight'] = -3;// Karena add_entityconnect = -2
-    $element['#attached']['js'][] = [
-        'type' => 'file',
-        'data' => drupal_get_path('module', 'sbadmin2_helper').'/js/tooltip.js',
-        'group' => JS_THEME,
-    ];
+    $element['#attached']['libraray'][] = ['sbadmin2', 'sbadmin2.tooltip'];
     if ($is_exist_add && $is_exist_edit) {
         $description = t("Set value by search then you can edit the result, or add if you don't find it.");
     }
@@ -266,7 +262,6 @@ function _sbadmin2_element_pre_render_entityconnect($element) {
             $element[$property] = $element['target_id'][$property];
         }
     }
-
     // New element.
     $element['sbadmin2_info_sign'] = [
         '#type' => 'icon',

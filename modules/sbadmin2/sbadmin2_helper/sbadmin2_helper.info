@@ -1,8 +1,13 @@
-name = SB Admin 2 Helper
-description = Menyediakan berbagai kebutuhan bagi theme SBAdmin2.
+name = SBAdmin2 Helper
+description = Menyediakan user interface bagi theme SBAdmin2 dan penambah fitur bagi theme SBAdmin2.
 core = 7.x
 version = 0.1.0
-package = SB Admin 2
+package = SBAdmin2
 dependencies[] = block
 dependencies[] = search
 dependencies[] = ctools
+dependencies[] = themejs
+files[] = sbadmin2_helper_handler_field_ctools_dropdown.inc
+files[] = sbadmin2_helper_handler_field_trait.inc
+files[] = sbadmin2_helper_handler_theme_bootstrap_links.inc
+files[] = sbadmin2_helper_handler_theme_random.inc

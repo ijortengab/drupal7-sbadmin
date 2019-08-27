@@ -18,8 +18,8 @@ Drupal.sbadmin2.parseAutocompleteValue = function (i) {
 Drupal.behaviors.sbadmin2select2 = {
   attach: function (context, settings) {
     $('select.sbadmin2-select2', context).once('sbadmin2-select2', function () {
-        // return;
-        var options = settings.sbadmin2.defaultOptions;
+        // Clone as new object.
+        var options = $.extend(true, {}, settings.sbadmin2.defaultOptions);
         if (typeof settings.sbadmin2.element[this.id] !== 'undefined') {
             var id = this.id;
             if (typeof settings.sbadmin2.element[id].route !== 'undefined') {

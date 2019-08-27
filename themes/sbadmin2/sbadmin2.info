@@ -9,14 +9,11 @@ regions[content] = Content
 ; Library.
 stylesheets[all][] = vendor/twitter-bootstrap/3.3.7/css/bootstrap.min.css
 stylesheets[all][] = vendor/font-awesome/4.7.0/css/font-awesome.min.css
-stylesheets[all][] = vendor/select2/4.0.5/css/select2.min.css
 stylesheets[all][] = vendor/metisMenu/1.1.3/metisMenu.min.css
 scripts[]          = vendor/twitter-bootstrap/3.3.7/js/bootstrap.min.js
-scripts[]          = vendor/select2/4.0.5/js/select2.min.js
 scripts[]          = vendor/metisMenu/1.1.3/metisMenu.min.js
 ; Library special bootstrap.
 stylesheets[all][] = vendor/startbootstrap-sb-admin-2/3.3.7+1/css/sb-admin-2.min.css
-stylesheets[all][] = vendor/select2-bootstrap-theme/0.1.0-beta.10/select2-bootstrap.min.css
 ; SB Admin 2.
 stylesheets[all][] = css/sbadmin2.css
 scripts[] = js/dollar-sign-as-jquery.js
@@ -24,3 +21,4 @@ scripts[] = vendor/startbootstrap-sb-admin-2/3.3.7+1/js/sb-admin-2.min.js
 ; Additional
 stylesheets[all][] = css/sbadmin2-bootstrap.css
 stylesheets[all][] = css/override.css
+stylesheets[all][] = css/local.css
