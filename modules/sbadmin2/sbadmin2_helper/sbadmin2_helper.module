@@ -243,16 +243,16 @@ function sbadmin2_helper_views_api() {
  *   $view itu sendiri.
  */
 function sbadmin2_helper_is_views_display_table($mixed) {
-    if (isset($mixed->view)) {
+    if (is_object($mixed) && property_exists('view', $mixed)) {
         $view = $mixed->view;
     }
-    elseif (isset($mixed['view'])) {
+    elseif (is_array($mixed) && array_key_exists('view', $mixed)) {
         $view = $mixed['view'];
     }
-    elseif ((new ReflectionClass($mixed))->name == 'view') {
+    else {
         $view = $mixed;
     }
-    return (isset($view)) ? ($view->display[$view->current_display]->display_options['style_plugin'] == 'table') : false;
+    return (is_object($view) && (new ReflectionClass($mixed))->name == 'view') ? ($view->display[$view->current_display]->display_options['style_plugin'] == 'table') : false;
 }
 
 /**
