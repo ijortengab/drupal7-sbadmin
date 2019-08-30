@@ -39,7 +39,8 @@ trait sbadmin2_helper_handler_field_trait {
      */
     public function options_form(&$form, &$form_state) {
         parent::options_form($form, $form_state);
-        if (!sbadmin2_helper_is_views_display_table($this)) {
+        $view = $this->view;
+        if ($view->display_handler->get_option('style_plugin') != 'table') {
             return;
         }
         $form['sbadmin2'] = array(

@@ -26,7 +26,7 @@ table {
   border-collapse: collapse;
 }
 th {
-  border-bottom: 3px solid #ccc;
+  /* border-bottom: 3px solid #ccc; */
   padding-right: 1em; /* LTR */
   text-align: left; /* LTR */
 }

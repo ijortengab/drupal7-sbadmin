@@ -1,0 +1,100 @@
+/**
+ * Tambahan style untuk melengkapi yang kurang dari Bootstrap.
+ * Override khusus terkait dengan CSS bootstrap.
+ */
+
+/**
+ * Menambah error color pada input group button.
+ */
+.has-error .input-group-btn .btn{
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #a94442;
+}
+
+/**
+ * Main menu agar fix satu line.
+ */
+#side-menu.nav>li>a {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/**
+ * Disabled jangan bikin user kaget.
+ */
+.form-control[disabled], fieldset[disabled] .form-control {
+    cursor: inherit;
+}
+
+/**
+ * Form horizontal yang memiliki description margin bottom terlalu besar.
+ */
+.form-horizontal .form-group .help-block{
+    margin-bottom:0;
+}
+
+/**
+ *
+ */
+.form-horizontal .form-group.checkbox {
+    margin-bottom: 15px;
+}
+.form-horizontal .form-group.checkbox > div{
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+/**
+ *
+ */
+.btn-group-addon {
+    background-color: #eee;
+    cursor: text;
+    border: 1px solid #ccc;
+    -webkit-user-select: auto;
+    -moz-user-select: auto;
+    -ms-user-select: auto;
+    user-select: auto;
+}
+.btn-group-addon:active {
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    -ms-box-shadow: none;
+    box-shadow: none;
+}
+.btn-group[data-toggle="buttons"]>.btn+.dropdown-toggle {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    margin-right: -1px;
+}
+
+/**
+ *
+ */
+.list-group-item-default {
+    background-color: #f5f5f5;
+}
+
+/**
+ * Paragraphs didalam list grup tidak perlu menambah panjang margin bottom.
+ */
+.list-group-item p:last-child {
+    margin-bottom:0;
+}
+
+/**
+ * Jika style table dan header diconvert sebagai list group, maka
+ * perlu perbaikan pada list posisi pertama yang double border.
+ */
+.list-group.view-header > .list-group-item:first-child {
+    border-top:0px;
+}
+
+/**
+ * Kebanyakan border bottom jadinya jika 2px, karena sudah ditambah border-top.
+ */
+.table>thead>tr>th {
+    border-bottom: 1px solid #ddd;
+}

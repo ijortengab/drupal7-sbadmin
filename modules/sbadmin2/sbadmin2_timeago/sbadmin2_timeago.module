@@ -1,6 +1,6 @@
 <?php
 
-function sbadmin2_timeago_return(\DateTime $date, $render = null) {
+function sbadmin2_timeago_return_array(\DateTime $date, $render = null) {
     $render = ($render === null) ? $date->format('r') : $render;
     return [
         $date->format('c'),

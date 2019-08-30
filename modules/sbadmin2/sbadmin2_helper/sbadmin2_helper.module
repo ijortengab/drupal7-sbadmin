@@ -1,6 +1,7 @@
 <?php
 
 define('SBADMIN_HELPER_DATATABLES_REFERENCES_SOURCE', 'https://datatables.net/examples/data_sources/');
+define('SBADMIN_HELPER_BOOTSTRAP_REFERENCES_LIST_GROUP', 'https://getbootstrap.com/docs/3.3/components/#list-group');
 
 // Drupal and Module Hook.
 
@@ -238,24 +239,6 @@ function sbadmin2_helper_views_api() {
 }
 
 /**
- * @param mixed $mixed
- *   Dapat berupa $form_state, $view_plugin, $view_handler atau
- *   $view itu sendiri.
- */
-function sbadmin2_helper_is_views_display_table($mixed) {
-    if (is_object($mixed) && property_exists('view', $mixed)) {
-        $view = $mixed->view;
-    }
-    elseif (is_array($mixed) && array_key_exists('view', $mixed)) {
-        $view = $mixed['view'];
-    }
-    else {
-        $view = $mixed;
-    }
-    return (is_object($view) && (new ReflectionClass($mixed))->name == 'view') ? ($view->display[$view->current_display]->display_options['style_plugin'] == 'table') : false;
-}
-
-/**
  * Implements of hook_views_plugin_option_definition_alter().
  *
  * Menambah definition pada class views_plugin_style_table agar nanti dapat di
@@ -273,9 +256,10 @@ function sbadmin2_helper_views_plugin_option_definition_alter(&$definition, $han
  * Menambah form element pada setting style table.
  */
 function sbadmin2_helper_form_views_ui_edit_display_form_alter(&$form, &$form_state) {
+    $view = $form_state['view'];
     switch ($form_state['section']) {
         case 'style_options':
-            if (sbadmin2_helper_is_views_display_table($form_state)) {
+            if ($view->display_handler->get_option('style_plugin') == 'table') {
                 $that = $form_state['view']->display[$form_state['display_id']];
                 $form['options']['style_options']['sbadmin2'] = [
                     '#type' => 'fieldset',
@@ -301,6 +285,13 @@ function sbadmin2_helper_form_views_ui_edit_display_form_alter(&$form, &$form_st
                         ],
                     ],
                 ];
+                $form['options']['style_options']['sbadmin2']['listgroup_convert'] = [
+                    '#type' => 'checkboxes',
+                    '#options' => ['header' => 'Header', 'footer' => 'Footer', 'exposed_form' => 'Exposed Form'],
+                    '#title' => t('Convert to List Group'),
+                    '#default_value' => isset($that->display_options['style_options']['sbadmin2']['listgroup_convert']) ? $that->display_options['style_options']['sbadmin2']['listgroup_convert'] : [],
+                    '#description' => t('Turn area field as item in list group. <a href="!link">Learn More.</a>', ['!link' => SBADMIN_HELPER_BOOTSTRAP_REFERENCES_LIST_GROUP]),
+                ];
             }
             break;
     }
@@ -322,8 +313,8 @@ function sbadmin2_helper_form_views_ui_config_item_form_alter(&$form, &$form_sta
  * Implements hook_views_ajax_data_alter().
  */
 function sbadmin2_helper_views_ajax_data_alter(&$commands, $view) {
-    if (sbadmin2_helper_is_views_display_table($view)) {
-        $style_options = $view->display[$view->current_display]->display_options['style_options'];
+    if ($view->display_handler->get_option('style_plugin') == 'table') {
+        $style_options = $view->display_handler->get_option('style_options');
         if (isset($style_options['sbadmin2']['datatables_convert']) && $style_options['sbadmin2']['datatables_convert']) {
             $commands[] = [
                 'command' => 'sbadmin2DatatablesRedraw',
@@ -483,4 +474,26 @@ function sbadmin2_helper_preprocess_views_view_table(&$variables) {
         }
     }
     unset($view->row_index);
+}
+
+function sbadmin2_helper_form_views_exposed_form_alter(&$form, &$form_state) {
+    $view = $form_state['view'];
+    if ($view->display_handler->get_option('style_plugin') == 'table') {
+        $style_options = $form_state['view']->display_handler->get_option('style_options');
+        $exposed_form_listgroup_convert = isset($style_options['sbadmin2']['listgroup_convert']['exposed_form']) && $style_options['sbadmin2']['listgroup_convert']['exposed_form'];
+        if ($exposed_form_listgroup_convert) {
+            $form['#sbadmin2_theme_hook_suggestions'] = ['views_exposed_form__listgroup'];
+        }
+    }
+
+}
+
+/**
+ *
+ */
+function sbadmin2_helper_preprocess_views_exposed_form(&$variables) {
+    $form = &$variables['form'];
+    if (isset($form['#sbadmin2_theme_hook_suggestions'])) {
+        $variables['theme_hook_suggestions'] = array_merge($form['#sbadmin2_theme_hook_suggestions'], $variables['theme_hook_suggestions']);
+    }
 }

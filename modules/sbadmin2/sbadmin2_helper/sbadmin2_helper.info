@@ -11,3 +11,4 @@ files[] = sbadmin2_helper_handler_field_ctools_dropdown.inc
 files[] = sbadmin2_helper_handler_field_trait.inc
 files[] = sbadmin2_helper_handler_theme_bootstrap_links.inc
 files[] = sbadmin2_helper_handler_theme_random.inc
+files[] = sbadmin2_helper_plugin_display_default.inc

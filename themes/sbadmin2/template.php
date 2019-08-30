@@ -101,13 +101,13 @@ function sbadmin2_theme($existing, $type, $theme, $path) {
  */
 function sbadmin2_library() {
     $path = drupal_get_path('theme', 'sbadmin2');
-    $libraries['sbadmin2.core'] = [
-        'title' => 'SBAdmin2 Core',
+    $libraries['sbadmin2.views_table'] = [
+        'title' => 'SBAdmin2 Views Table',
         'website' => 'https://github.com/ijortengab/drupal7-sbadmin2',
         'version' => '1.0.0',
         'js' => [
-            $path.'/js/sbadmin2.js' => [
-                'group' => JS_THEME,
+            $path.'/js/views-table.js' => [
+                'group' => JS_DEFAULT,
             ],
         ],
     ];
@@ -117,7 +117,7 @@ function sbadmin2_library() {
         'version' => '1.0.0',
         'js' => [
             $path.'/js/managed-file.js' => [
-                'group' => JS_THEME,
+                'group' => JS_DEFAULT,
             ],
         ],
         'css' => [
@@ -130,7 +130,7 @@ function sbadmin2_library() {
         'version' => '1.0.0',
         'js' => [
             $path.'/js/tooltip.js' => [
-                'group' => JS_THEME,
+                'group' => JS_DEFAULT,
             ],
         ],
     ];
@@ -245,6 +245,7 @@ function sbadmin2_js_alter(&$javascript) {
  * Implements hook_css_alter().
  */
 function sbadmin2_css_alter(&$css) {
+
     // CSS dibawah ini harus sebagai grup system.
     $path = drupal_get_path('theme', 'sbadmin2');
     $css[$path . '/vendor/twitter-bootstrap/3.3.7/css/bootstrap.min.css']['group'] = CSS_SYSTEM;
@@ -253,9 +254,11 @@ function sbadmin2_css_alter(&$css) {
 
     // Replace CSS tertentu karena sulit dioverride.
     $system = drupal_get_path('module', 'system') . '/system.theme.css';
+
     if (isset($css[$system])) {
         $system_takeover = $path . '/css/takeover/system.theme.css';
         $css[$system_takeover] = $css[$system];
+        $css[$system_takeover]['data'] = $system_takeover;
         unset($css[$system]);
     }
     if (module_exists('date_api')) {
@@ -263,6 +266,7 @@ function sbadmin2_css_alter(&$css) {
         if (isset($css[$date])) {
             $date_takeover = $path . '/css/takeover/date.css';
             $css[$date_takeover] = $css[$date];
+            $css[$date_takeover]['data'] = $date_takeover;
             unset($css[$date]);
         }
     }

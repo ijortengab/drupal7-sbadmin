@@ -75,7 +75,7 @@ div.field-type-entityreference div.field-items {
 /**
  * harusnya gunakan class, jangan override ini
  */
-.panel-heading{
+.node-form .panel-heading{
     text-transform: uppercase;
     font-weight: bold;
 }
@@ -140,4 +140,15 @@ div.dataTables_wrapper div.dataTables_filter label {
  */
 a.logo img {
     height:29px;
+}
+
+/**
+ * Views widget tidak perlu pake float jika listgroup.
+ */
+.list-group .views-exposed-form .views-exposed-widget {
+    float: none;
+    padding: 0;
+}
+.list-group .views-exposed-form .views-exposed-widget .form-submit {
+    margin-top: 0;
 }

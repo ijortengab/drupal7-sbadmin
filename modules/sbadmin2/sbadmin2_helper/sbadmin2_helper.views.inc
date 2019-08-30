@@ -17,3 +17,7 @@ function sbadmin2_helper_views_data_alter(&$data) {
     // perbaikan bug pada views_handler_field_ctools_dropdown::get_links().
     $data['views']['ctools_dropdown']['field']['override handler'] = 'sbadmin2_helper_handler_field_ctools_dropdown';
 }
+
+function sbadmin2_helper_views_plugins_alter(&$plugins) {
+    $plugins['display']['default']['override handler'] = 'sbadmin2_helper_plugin_display_default';
+}
