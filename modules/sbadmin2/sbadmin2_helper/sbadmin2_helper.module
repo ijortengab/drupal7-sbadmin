@@ -75,7 +75,7 @@ function sbadmin2_helper_field_widget_form_alter(&$element, &$form_state, $conte
     if ($context['field']['type'] == 'entityreference') {
         // Support for library select2.
         if (!empty($context['instance']['widget']['settings']['sbadmin2_helper']['select2_convert'])) {
-            $element['target_id']['#sbadmin2_select2'] = true;
+            $element['target_id']['#sbadmin2_transform'] = 'select2';
         }
 
         //  Support for module entityconnect.
@@ -87,7 +87,8 @@ function sbadmin2_helper_field_widget_form_alter(&$element, &$form_state, $conte
             // Give toggle to allow custom module ignore sbadmin2 via
             // hook_form_alter().
             $element['#sbadmin2'] = true;
-            $element['#pre_render'][] = 'sbadmin2_element_pre_render_entityconnect';
+            $element['#sbadmin2_entityconnect'] = true;
+            $element['#pre_render'][] = 'sbadmin2_element_pre_render_spesific';
         }
     }
 }
@@ -474,26 +475,4 @@ function sbadmin2_helper_preprocess_views_view_table(&$variables) {
         }
     }
     unset($view->row_index);
-}
-
-function sbadmin2_helper_form_views_exposed_form_alter(&$form, &$form_state) {
-    $view = $form_state['view'];
-    if ($view->display_handler->get_option('style_plugin') == 'table') {
-        $style_options = $form_state['view']->display_handler->get_option('style_options');
-        $exposed_form_listgroup_convert = isset($style_options['sbadmin2']['listgroup_convert']['exposed_form']) && $style_options['sbadmin2']['listgroup_convert']['exposed_form'];
-        if ($exposed_form_listgroup_convert) {
-            $form['#sbadmin2_theme_hook_suggestions'] = ['views_exposed_form__listgroup'];
-        }
-    }
-
-}
-
-/**
- *
- */
-function sbadmin2_helper_preprocess_views_exposed_form(&$variables) {
-    $form = &$variables['form'];
-    if (isset($form['#sbadmin2_theme_hook_suggestions'])) {
-        $variables['theme_hook_suggestions'] = array_merge($form['#sbadmin2_theme_hook_suggestions'], $variables['theme_hook_suggestions']);
-    }
 }

@@ -35,12 +35,16 @@ class sbadmin2_timeago_handler_field_field_datetime extends views_handler_field_
             //     ['value' => '2019-05-29 00:00:00', 'timezone' => 'Asia/Jakarta', 'timezone_db' => 'Asia/Jakarta', 'date_type' => 'datetime']
             // ];
             $value = $this->get_value($values);
+            if (!empty($value)) {
+                $value = array_shift($value); // 2019-05-29 00:00:00
+                $date_time = DateTime::createFromFormat('Y-m-d H:i:s', $value['value'], new DateTimeZone($value['timezone']));
+                return sbadmin2_timeago_return_array($date_time, strip_tags($render));
+            }
+            return '';
+
             // if (count($value) > 1) {
                 // @todo: Beri warning bahwa kita hanya support untuk satu value.
             // }
-            $value = array_shift($value); // 2019-05-29 00:00:00
-            $date_time = DateTime::createFromFormat('Y-m-d H:i:s', $value['value'], new DateTimeZone($value['timezone']));
-            return sbadmin2_timeago_return_array($date_time, strip_tags($render));
         }
         else {
             return strip_tags($render);

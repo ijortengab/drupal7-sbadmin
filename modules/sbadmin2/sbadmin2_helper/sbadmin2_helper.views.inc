@@ -20,4 +20,6 @@ function sbadmin2_helper_views_data_alter(&$data) {
 
 function sbadmin2_helper_views_plugins_alter(&$plugins) {
     $plugins['display']['default']['override handler'] = 'sbadmin2_helper_plugin_display_default';
+    $plugins['display']['page']['override handler'] = 'sbadmin2_helper_plugin_display_page';
+    $plugins['display']['block']['override handler'] = 'sbadmin2_helper_plugin_display_block';
 }

@@ -152,3 +152,10 @@ a.logo img {
 .list-group .views-exposed-form .views-exposed-widget .form-submit {
     margin-top: 0;
 }
+
+/**
+ * Override .views-exposed-form label
+ */
+.views-exposed-form  label {
+    font-weight:normal;
+}

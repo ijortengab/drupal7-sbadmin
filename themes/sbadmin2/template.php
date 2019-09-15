@@ -1,11 +1,10 @@
 <?php
 
-include_once __DIR__ . '/includes/classes/sbadmin2.utils.inc';
-include_once __DIR__ . '/includes/classes/sbadmin2.inputgroup.inc';
-include_once __DIR__ . '/includes/classes/sbadmin2.menu.inc';
-include_once __DIR__ . '/includes/sbadmin2.theme_override.inc';
-include_once __DIR__ . '/includes/sbadmin2.preprocess.inc';
-include_once __DIR__ . '/includes/sbadmin2.pre_render.inc';
+include_once __DIR__ . '/src/sbadmin2_utils.inc';
+include_once __DIR__ . '/src/sbadmin2_inputgroup.inc';
+include_once __DIR__ . '/src/sbadmin2_prerender.inc';
+include_once __DIR__ . '/src/sbadmin2_menu.inc';
+include_once __DIR__ . '/includes/sbadmin2.override.inc';
 include_once __DIR__ . '/includes/sbadmin2.form_alter.inc';
 include_once __DIR__ . '/includes/sbadmin2.block_alter.inc';
 
@@ -33,66 +32,50 @@ drupal_static_reset('element_info');
  * | input_group_addon  | yes        | yes         |                        |
  * | menu_nolink        | -          | -           |                        |
  * | form_element2      | yes        | yes         | textfield2,  password2 |
+ * |                    |            |             | checkbox*              |
  * | textfield2         | -          | -           | textfield2             |
  * | password2          | -          | -           | password2              |
  * | submit2            | -          | -           | submit2                |
- * | submit3            | yes        | yes         | submit2                |
+ * | button_wrapper     | yes        | yes         | submit2                |
  * | icon               | -          | -           | icon                   |
  * |                    |            |             |                        |
  */
 function sbadmin2_theme($existing, $type, $theme, $path) {
+    $base = [
+        'render element' => 'element',
+        'file' => 'includes/sbadmin2.inc',
+    ];
     return [
         // Implements #theme = 'node_form'
         // @see: drupal_prepare_form() dan node_form().
         'node_form' => [
             'render element' => 'form',
             'template' => 'templates/node-form',
+            'file' => 'includes/sbadmin2.inc',
         ],
-        'menu_nolink' => [
-            'render element' => 'element',
-            'file' => 'includes/sbadmin2.theme.inc',
-        ],
-        'input_group' => array(
-            'render element' => 'element',
-            'file' => 'includes/sbadmin2.theme.inc',
-            'template' => 'templates/div-wrapper',
-        ),
-        'input_group_button' => array(
-            'render element' => 'element',
-            'file' => 'includes/sbadmin2.theme.inc',
-            'template' => 'templates/div-wrapper',
-        ),
-        'input_group_addon' => array(
-            'render element' => 'element',
-            'file' => 'includes/sbadmin2.theme.inc',
-            'template' => 'templates/span-wrapper',
-       ),
-        'form_element2' => array(
-            'render element' => 'element',
-            'file' => 'includes/sbadmin2.theme.inc',
-            'template' => 'templates/form-element-wrapper',
-        ),
-        'textfield2' => array(
-            'render element' => 'element',
-            'file' => 'includes/sbadmin2.theme.inc',
-        ),
-        'password2' => array(
-            'render element' => 'element',
-            'file' => 'includes/sbadmin2.theme.inc',
-        ),
-        'submit2' => array(
-            'render element' => 'element',
-            'file' => 'includes/sbadmin2.theme.inc',
-        ),
-        'submit3' => array(
-            'render element' => 'element',
-            'file' => 'includes/sbadmin2.theme.inc',
-            'template' => 'templates/button-wrapper',
-        ),
-        'icon' => array(
-            'render element' => 'element',
-            'file' => 'includes/sbadmin2.theme.inc',
-        ),
+        'menu_nolink' => $base,
+        'input_group' => $base + ['template' => 'templates/div-wrapper'],
+        'input_group_button' => $base + ['template' => 'templates/div-wrapper'],
+        'input_group_addon' => $base + ['template' => 'templates/span-wrapper'],
+        'button_group' => $base + ['template' => 'templates/div-wrapper'],
+        'button_toolbar' => $base + ['template' => 'templates/div-wrapper'],
+        'button_group_input' => $base + ['template' => 'templates/div-wrapper'],
+        'list_group_item' => $base + ['template' => 'templates/div-wrapper'],
+        'button_group_addon' => $base + ['template' => 'templates/label-wrapper'],
+        // `form_element2` digunakan untuk pengganti form_element karena
+        // tidak perlu label.
+        'form_element2' => $base + ['template' => 'templates/form-element-wrapper'],
+        'textfield2' => $base,
+        'password2' => $base,
+        'submit2' => $base,
+        // Karena hook `button` sudah dimiliki oleh Drupal core.
+        'button_wrapper' => $base + ['template' => 'templates/button-wrapper'],
+        'icon' => $base,
+        // Khusus input checkbox, checkboxes, radio, dan radios yang memiliki
+        // property #sbadmin_button = true.
+        'label_button' => $base + ['template' => 'templates/label-wrapper'],
+        'dropdown_menu' => $base + ['template' => 'templates/ul-wrapper'],
+        'dropdown_menu_item' => $base,
     ];
 }
 
@@ -101,16 +84,16 @@ function sbadmin2_theme($existing, $type, $theme, $path) {
  */
 function sbadmin2_library() {
     $path = drupal_get_path('theme', 'sbadmin2');
-    $libraries['sbadmin2.views_table'] = [
-        'title' => 'SBAdmin2 Views Table',
-        'website' => 'https://github.com/ijortengab/drupal7-sbadmin2',
-        'version' => '1.0.0',
-        'js' => [
-            $path.'/js/views-table.js' => [
-                'group' => JS_DEFAULT,
-            ],
-        ],
-    ];
+    // $libraries['sbadmin2.views_table'] = [
+        // 'title' => 'SBAdmin2 Views Table',
+        // 'website' => 'https://github.com/ijortengab/drupal7-sbadmin2',
+        // 'version' => '1.0.0',
+        // 'js' => [
+            // $path.'/js/views-table.js' => [
+                // 'group' => JS_DEFAULT,
+            // ],
+        // ],
+    // ];
     $libraries['sbadmin2.managed_file'] = [
         'title' => 'SBAdmin2 Managed file',
         'website' => 'https://github.com/ijortengab/drupal7-sbadmin2',
@@ -179,8 +162,51 @@ function sbadmin2_library() {
             $path.'/vendor/timeago.js/3.0.2/timeago.js' => ['group' => JS_LIBRARY],
             $path.'/js/timeago.js' => ['group' => JS_DEFAULT],
         ],
-        'css' => [
-            $path.'/vendor/datatables/1.10.19/css/dataTables.bootstrap.min.css' => ['group' => CSS_DEFAULT],
+    ];
+    $libraries['sbadmin2.dropdown_menu'] = [
+        'title' => 'SBAdmin2 Dropdown Menu',
+        'website' => 'https://github.com/ijortengab/drupal7-sbadmin2',
+        'version' => '1.0.0',
+        'js' => [
+            $path.'/js/dropdown_menu.js' => ['group' => JS_DEFAULT],
+        ],
+    ];
+    $libraries['sbadmin2.icon'] = [
+        'title' => 'SBAdmin2 Icon Theme',
+        'website' => 'https://github.com/ijortengab/drupal7-sbadmin2',
+        'version' => '1.0.0',
+        'js' => [
+            $path.'/js/icon.js' => ['group' => JS_DEFAULT],
+        ],
+    ];
+    $libraries['sbadmin2.views_toggle_operator'] = [
+        'title' => 'SBAdmin2 Views Toggle Operator',
+        'website' => 'https://github.com/ijortengab/drupal7-sbadmin2',
+        'version' => '1.0.0',
+        'js' => [
+            $path.'/js/views-toggle-operator.js' => ['group' => JS_DEFAULT],
+        ],
+        'dependencies' => [
+            ['sbadmin2', 'sbadmin2.icon'],
+        ],
+    ];
+    $libraries['sbadmin2.views_multiple_select'] = [
+        'title' => 'SBAdmin2 Views Multiple Select',
+        'website' => 'https://github.com/ijortengab/drupal7-sbadmin2',
+        'version' => '1.0.0',
+        'js' => [
+            $path.'/js/views-multiple-select.js' => ['group' => JS_DEFAULT],
+        ],
+        'dependencies' => [
+            ['sbadmin2', 'sbadmin2.icon'],
+        ],
+    ];
+    $libraries['sbadmin2.dependent'] = [
+        'title' => 'SBAdmin2 Dependent by Class',
+        'website' => 'https://github.com/ijortengab/drupal7-sbadmin2',
+        'version' => '1.0.0',
+        'js' => [
+            $path.'/js/takeover/dependent.js' => ['group' => JS_DEFAULT],
         ],
     ];
     return $libraries;
@@ -192,18 +218,13 @@ function sbadmin2_library() {
  * Implements of hook_element_info_alter.
  */
 function sbadmin2_element_info_alter(&$types) {
-    $form_elements = [
-        'form', 'textarea', 'textfield', 'password', 'select', 'submit',
-        'checkbox', 'button', 'file', 'managed_file', 'date_combo'
-    ];
-    foreach ($form_elements as $element) {
-        // Give toggle to allow custom module ignore sbadmin2 via
-        // hook_form_alter().
-        $types[$element]['#sbadmin2'] = true;
-        $types[$element]['#process'][] = 'sbadmin2_element_process';
-        $types[$element]['#pre_render'][] = 'sbadmin2_element_pre_render';
+    foreach (array_keys($types) as $type) {
+        $types[$type]['#sbadmin2'] = true;
+        $types[$type]['#process'][] = 'sbadmin2_element_process';
+        $types[$type]['#pre_render'][] = 'sbadmin2_element_pre_render';
     }
     $reference = system_element_info();
+    // @todo: textfield* dan password* diganti sebagai property saja.
     // Type: `textfield2`.
     $types['textfield2'] = $reference['textfield'];
     $types['textfield2']['#theme'] = 'textfield2';
@@ -216,14 +237,28 @@ function sbadmin2_element_info_alter(&$types) {
     $types['password2']['#theme'] = 'password2';
     $types['password2']['#theme_wrappers'] = ['form_element2'];
 
-    $types['submit2'] = $reference['submit'];
-    $types['submit2']['#theme'] = 'submit2';
-    $types['submit2']['#theme_wrappers'] = ['submit3'];
-    $types['submit3'] = $reference['submit'];
-    $types['submit3']['#theme_wrappers'] = ['submit3'];
+    $types['submit_button'] = $reference['submit'];
+    $types['submit_button']['#theme_wrappers'] = ['button_wrapper'];
     $types['icon'] = [
         '#theme' => 'icon',
         '#bundle' => 'fontawesome',
+    ];
+    $types['input_group_addon'] = [
+        '#theme_wrappers' => [
+            'input_group_addon',
+        ],
+    ];
+    $types['button_group_addon'] = [
+        '#theme_wrappers' => [
+            'button_group_addon',
+        ],
+    ];
+    $types['dropdown_menu'] = [
+        '#theme' => 'dropdown_menu_item',
+        '#options' => [],
+        '#theme_wrappers' => [
+            'dropdown_menu',
+        ],
     ];
 }
 
@@ -235,6 +270,15 @@ function sbadmin2_js_alter(&$javascript) {
     $path = drupal_get_path('theme', 'sbadmin2');
     $javascript[$path . '/vendor/twitter-bootstrap/3.3.7/js/bootstrap.min.js']['group'] = JS_LIBRARY;
     $javascript[$path . '/vendor/metisMenu/1.1.3/metisMenu.min.js']['group'] = JS_LIBRARY;
+
+    // Ambil alih dependent.js. Ganti dengan yang dimiliki oleh sbadmin2 yang telah
+    // mendukung selector by class dan selector self instead of parent.
+    $ctools_dependent_path = (module_exists('ctools')) ? ctools_attach_js('dependent') : null;
+    $sbadmin2_dependent_path = $path . '/js/takeover/dependent.js';
+    if (isset($javascript[$ctools_dependent_path]) && isset($javascript[$sbadmin2_dependent_path])) {
+        unset($javascript[$ctools_dependent_path]);
+    }
+
     // Pindahkan seluruh javascript ke footer.
     foreach ($javascript as $key => &$value) {
         $value['scope'] = 'footer';
@@ -279,29 +323,13 @@ function sbadmin2_css_alter(&$css) {
  */
 function sbadmin2_element_process($element, &$form_state, $form) {
     // Oper informasi form horizontal dari form ke element sehingga
-    // nanti bisa dioleh oleh theme_form_element.
-
+    // nanti bisa diolah oleh sbadmin2_form_element.
     if (isset($form['#sbadmin2_form_horizontal']) && $form['#sbadmin2_form_horizontal'] === true) {
         $element['#sbadmin2_form_horizontal'] = true;
     }
-
-    // Add support to select2. Ketika
-    if (!empty($element['#sbadmin2_select2'])) {
-        // Jika trigger form error, maka value dari form_state perlu kita
-        // kembalikan ke element.
-        $default_value = drupal_array_get_nested_value($form_state['values'], $element['#parents']);
-        empty($default_value) or $element['#sbadmin2_select2_default_value'] = $default_value;
-
-        if (is_numeric($default_value)) {
-            // Ini berarti hasil dari kembalian dari halaman edit entityconnect
-            // karena module telah mengubahnya menjadi numeric.
-            empty($element['#value']) or $element['#sbadmin2_select2_default_value'] = $element['#value'];
-        }
-    }
-
-    // Attach library kayaknya disini deh.
-    if (isset($element['#type']) && $element['#type'] == 'managed_file' && !empty($element['#sbadmin2'])) {
-        $element['#attached']['library'][] = ['sbadmin2', 'sbadmin2.managed_file'];
+    // Add support to dependency by class instead of by id.
+    if (isset($element['#dependency']) && !empty($element['#sbadmin2_dependency'])) {
+       sbadmin2_utils::replace_pre_render('ctools_dependent_pre_render', 'sbadmin2_dependent_pre_render', $element);
     }
     return $element;
 }
@@ -310,18 +338,152 @@ function sbadmin2_element_process($element, &$form_state, $form) {
  * Callback of property #pre_render in element.
  */
 function sbadmin2_element_pre_render($element) {
-    if (isset($element['#sbadmin2']) && $element['#sbadmin2'] === true) {
-        return _sbadmin2_element_pre_render($element);
+    // Property #sbadmin2 sebagi toggle on/off. Untuk mematikan fungsi ini
+    // cukup dengan memberikan attribute `#sbadmin = false` pada
+    // hook_form_alter().
+    if (empty($element['#sbadmin2'])) {
+        return $element;
+    }
+    // Property before modify.
+    if (!empty($element['#sbadmin2_class_id'])) {
+        $element['#attributes']['class'][] = isset($element['#sbadmin2_class_id_value']) ? $element['#sbadmin2_class_id_value'] : $element['#id'];
+    }
+    $type = isset($element['#type']) ? $element['#type'] : null;
+    switch ($type) {
+        case 'form':
+            if (isset($element['#sbadmin_input_group']) && $element['#sbadmin_input_group']) {
+                $element = sbadmin2_inputgroup::factory($element);
+            }
+            break;
+
+        case 'textfield':
+            sbadmin2_prerender::modifyTextfield($element);
+            break;
+
+        case 'password':
+        case 'textarea':
+        case 'file':
+            sbadmin2_prerender::addFormControl($element);
+            break;
+
+        case 'submit':
+        case 'button':
+            sbadmin2_prerender::addButton($element);
+            break;
+
+        case 'select':
+            sbadmin2_prerender::modifySelect($element);
+            break;
+
+        case 'checkbox':
+        case 'radio':
+            if (!empty($element['#sbadmin2_button'])) {
+                sbadmin2_utils::remove_theme_wrappers('form_element', $element);
+                array_unshift($element['#theme_wrappers'], 'label_button', 'button_group_input', 'form_element2');
+            }
+            break;
+
+        case 'checkboxes':
+        case 'radios':
+            if (!empty($element['#sbadmin2_button'])) {
+                sbadmin2_prerender::modifyButtonGroupInput($element);
+            }
+            break;
+
+        case 'managed_file':
+            sbadmin2_prerender::modifyManagedFile($element);
+            break;
+
+        default:
+            sbadmin2_prerender::modifyOthers($element);
+            break;
+    }
+
+    // Property after modify.
+    if (!empty($element['#sbadmin2_clean_wrapper'])) {
+        unset($element['#theme_wrappers']);
+        unset($element['#prefix']);
+        unset($element['#suffix']);
     }
     return $element;
 }
 
 /**
- * Callback of property #pre_render in element.
+ * Prerender specific yang terdapat property khusus yang tidak perlu
+ * di-handle oleh sbadmin2_element_pre_render().
  */
-function sbadmin2_element_pre_render_entityconnect($element) {
-    if (isset($element['#sbadmin2']) && $element['#sbadmin2'] === true) {
-        return _sbadmin2_element_pre_render_entityconnect($element);
+function sbadmin2_element_pre_render_spesific($element) {
+    // Property #sbadmin2 sebagi toggle on/off. Untuk mematikan fungsi ini
+    // cukup dengan memberikan attribute `#sbadmin = false` pada
+    // hook_form_alter().
+    if (empty($element['#sbadmin2'])) {
+        return $element;
+    }
+    // Property ini diset oleh module `sbadmin2_helper` ketika mendetect
+    // adanya module `entityconnect`.
+    if (!empty($element['#sbadmin2_entityconnect'])) {
+        $element = sbadmin2_prerender::modifyEntityConnect($element);
+    }
+    // Property ini diset oleh `sbadmin2_form_views_exposed_form_alter()`.
+    if (!empty($element['#sbadmin2_views_date_popup'])) {
+        sbadmin2_prerender::modifyViewsDatePopup($element);
     }
     return $element;
+}
+
+/**
+ * Implements of hook_date_popup_process_alter().
+ */
+function sbadmin2_date_popup_process_alter(&$element, $form_state, $context) {
+    // Pada beberapa kasus, function sbadmin2_element_info_alter() tidak mampu
+    // memasukkan element property yang sudah exists misalnya `#process` dan
+    // `#pre_render`. Salahsatunya terjadi pada element info yang disediakan
+    // oleh module `date_popup`. Oleh karena itu kita gunakan hook ini untuk
+    // menginject value pada property `#pre_render`.
+    $element['#pre_render'][] = 'sbadmin2_element_pre_render_spesific';
+    if (isset($element['#dependency']) && !empty($element['#sbadmin2_dependency'])) {
+       sbadmin2_utils::replace_pre_render('ctools_dependent_pre_render', 'sbadmin2_dependent_pre_render', $element);
+    }
+}
+
+/**
+ * Extend function ctools_dependent_pre_render().
+ *
+ * Add support for class selector and self instead of parent.
+ */
+function sbadmin2_dependent_pre_render($element) {
+  // Preprocess only items with #dependency set.
+  if (isset($element['#dependency'])) {
+    if (!isset($element['#dependency_count'])) {
+      $element['#dependency_count'] = 1;
+    }
+    if (!isset($element['#dependency_type'])) {
+      $element['#dependency_type'] = 'hide';
+    }
+
+    $js = array(
+      'values' => $element['#dependency'],
+      'num' => $element['#dependency_count'],
+      'type' => $element['#dependency_type'],
+      'class' => isset($element['#sbadmin2_dependency_class']) ? $element['#sbadmin2_dependency_class'] : null,
+      'self' => isset($element['#sbadmin2_dependency_self']) ? $element['#sbadmin2_dependency_self'] : null,
+    );
+
+    // Add a additional wrapper id around fieldsets, textareas to support depedency on it.
+    if (in_array($element['#type'], array('textarea', 'fieldset', 'text_format'))) {
+      $element['#theme_wrappers'][] = 'container';
+      $element['#attributes']['id'] = $element['#id'] . '-wrapper';
+    }
+
+    // Text formats need to unset the dependency on the textarea
+    // or it gets applied twice.
+    if ($element['#type'] == 'text_format') {
+      unset($element['value']['#dependency']);
+    }
+
+    $element['#attached']['js'][] = ctools_attach_js('dependent');
+    $options['CTools']['dependent'][$element['#id']] = $js;
+    $element['#attached']['js'][] = array('type' => 'setting', 'data' => $options);
+  }
+  return $element;
 }

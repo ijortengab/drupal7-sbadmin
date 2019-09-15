@@ -71,8 +71,7 @@ class sbadmin2_inputgroup
                 break;
 
             case 'submit':
-            case 'submit2':
-            case 'submit3':
+            case 'submit_button':
             case 'button':
             case 'link':
             case 'actions':

@@ -40,8 +40,6 @@
 <?php if ($exposed): ?>
     <button aria-controls="collapseExample" aria-expanded="true" class="btn btn-xs btn-default" data-target="#views-filter-<?= $dom_id?>" data-toggle="collapse" type="button"> Filter </button>
 <?php endif; ?>
-
-    &nbsp;
     </div>
 
 

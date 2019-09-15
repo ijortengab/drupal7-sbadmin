@@ -29,10 +29,10 @@
 <div class="views-exposed-form">
 <div class="views-exposed-widgets clearfix">
 
+    <?= $widgets_rebuild;?>
 
     <?php foreach ($widgets as $id => $widget): ?>
       <div id="<?php print $widget->id; ?>-wrapper" class="views-exposed-widget views-widget-<?php print $id; ?>">
-        <div class="list-group-item">
         <?php if (!empty($widget->label)): ?>
           <label for="<?php print $widget->id; ?>">
             <?php print $widget->label; ?>
@@ -52,8 +52,10 @@
           </div>
         <?php endif; ?>
       </div>
-      </div>
     <?php endforeach; ?>
+
+
+
     <?php if (!empty($sort_by)): ?>
       <div class="views-exposed-widget views-widget-sort-by">
         <?php print $sort_by; ?>

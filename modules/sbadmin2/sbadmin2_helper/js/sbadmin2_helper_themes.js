@@ -6,14 +6,12 @@
  */
 Drupal.behaviors.bootstrapLinksNoWrap = {
     attach: function (context, settings) {
-        $('.btn-group', context).each(function () {
-            $(this).once('btn-group-nowrap', function () {
-                var width = 0;
-                var $childs = $(this).find(" > .btn").each(function () {
-                    width += $(this).outerWidth();
-                });
-                $(this).css('min-width', width)
+        $('.btn-group', context).once('btn-group-nowrap', function () {
+            var width = 0;
+            var $childs = $(this).find(" > .btn").each(function () {
+                width += $(this).outerWidth();
             });
+            $(this).css('min-width', width)
         });
     }
 };

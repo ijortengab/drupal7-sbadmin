@@ -58,6 +58,10 @@
     -ms-user-select: auto;
     user-select: auto;
 }
+.btn-group-addon.btn-sm {
+    font-size: 14px;
+    line-height: 1.33;
+}
 .btn-group-addon:active {
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
@@ -93,8 +97,53 @@
 }
 
 /**
- * Kebanyakan border bottom jadinya jika 2px, karena sudah ditambah border-top.
+ * Kebanyakan border bottom jadinya, jika 2px, karena sudah ditambah border-top.
  */
 .table>thead>tr>th {
     border-bottom: 1px solid #ddd;
+}
+
+/**
+ * @see sbadmin2_preprocess_checkbox_label()
+ */
+.has-error .btn{
+    border-color: #a94442;
+}
+/**
+ * Hacking agar input addon dan input button bisa berada pada satu sisi yang
+ * sama.
+ */
+.input-group-addon + .input-group-btn > .btn,
+.input-group-btn + .input-group-btn > .btn {
+    border-radius: 0;
+}
+.input-group-addon + .input-group-btn + .form-control,
+.input-group-btn + .input-group-btn + .form-control {
+    border-top-right-radius: 3px !important;
+    border-bottom-right-radius: 3px !important;
+}
+
+/**
+ * Select2 theme Bootstrap tidak terkena effect dari sizing form-control
+ */
+select.form-control.input-sm + .select2-container--bootstrap .select2-selection {
+    min-height: auto;
+    height: 30px;
+    line-height: 30px;
+    padding: 0px 10px;
+}
+
+select.form-control.input-lg + .select2-container--bootstrap .select2-selection {
+    min-height: auto;
+    height: 46px;
+    line-height: 46px;
+}
+
+/**
+ * Input group addon yang berada pada posisi paling akhir harusnya mendapat
+ * efek border-left: 0. Tooltip yang trigger saat hover, menyebabkan terdapat
+ * element div tambahan sehingga adon tidak lagi menjadi last-child.
+ */
+.input-group-addon.tooltip-processed:nth-last-child(2):hover {
+    border-left: 0;
 }
