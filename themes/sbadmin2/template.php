@@ -1,12 +1,12 @@
 <?php
 
-include_once __DIR__ . '/src/sbadmin2_utils.inc';
-include_once __DIR__ . '/src/sbadmin2_inputgroup.inc';
-include_once __DIR__ . '/src/sbadmin2_prerender.inc';
-include_once __DIR__ . '/src/sbadmin2_menu.inc';
-include_once __DIR__ . '/includes/sbadmin2.override.inc';
-include_once __DIR__ . '/includes/sbadmin2.form_alter.inc';
-include_once __DIR__ . '/includes/sbadmin2.block_alter.inc';
+spl_autoload_register(function ($class_name) {
+    include __DIR__ . '/src/' . $class_name . '.inc';
+});
+
+include_once __DIR__ . '/override.inc';
+include_once __DIR__ . '/form_alter.inc';
+include_once __DIR__ . '/block_alter.inc';
 
 /**
  * Clear any previously set element_info() static cache.
@@ -43,7 +43,7 @@ drupal_static_reset('element_info');
 function sbadmin2_theme($existing, $type, $theme, $path) {
     $base = [
         'render element' => 'element',
-        'file' => 'includes/sbadmin2.inc',
+        'file' => 'theme.inc',
     ];
     return [
         // Implements #theme = 'node_form'
@@ -51,7 +51,7 @@ function sbadmin2_theme($existing, $type, $theme, $path) {
         'node_form' => [
             'render element' => 'form',
             'template' => 'templates/node-form',
-            'file' => 'includes/sbadmin2.inc',
+            'file' => 'theme.inc',
         ],
         'menu_nolink' => $base,
         'input_group' => $base + ['template' => 'templates/div-wrapper'],
