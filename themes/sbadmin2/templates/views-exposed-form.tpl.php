@@ -74,11 +74,7 @@
         <?php print $offset; ?>
       </div>
     <?php endif; ?>
-    <div class="views-exposed-widget views-submit-button">
-        <div class="list-group-item list-group-item-default ">
               <?php print $button; ?>
-        </div>
-    </div>
     <?php if (!empty($reset_button)): ?>
       <div class="views-exposed-widget views-reset-button">
         <?php print $reset_button; ?>

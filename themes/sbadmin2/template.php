@@ -1,7 +1,9 @@
 <?php
 
 spl_autoload_register(function ($class_name) {
-    include __DIR__ . '/src/' . $class_name . '.inc';
+    if (file_exists(__DIR__ . '/src/' . $class_name . '.inc')) {
+        include __DIR__ . '/src/' . $class_name . '.inc';
+    }
 });
 
 include_once __DIR__ . '/override.inc';
@@ -60,6 +62,7 @@ function sbadmin2_theme($existing, $type, $theme, $path) {
         'button_group' => $base + ['template' => 'templates/div-wrapper'],
         'button_toolbar' => $base + ['template' => 'templates/div-wrapper'],
         'button_group_input' => $base + ['template' => 'templates/div-wrapper'],
+        'list_group' => $base + ['template' => 'templates/ul-wrapper'],
         'list_group_item' => $base + ['template' => 'templates/div-wrapper'],
         'button_group_addon' => $base + ['template' => 'templates/label-wrapper'],
         // `form_element2` digunakan untuk pengganti form_element karena
@@ -84,16 +87,6 @@ function sbadmin2_theme($existing, $type, $theme, $path) {
  */
 function sbadmin2_library() {
     $path = drupal_get_path('theme', 'sbadmin2');
-    // $libraries['sbadmin2.views_table'] = [
-        // 'title' => 'SBAdmin2 Views Table',
-        // 'website' => 'https://github.com/ijortengab/drupal7-sbadmin2',
-        // 'version' => '1.0.0',
-        // 'js' => [
-            // $path.'/js/views-table.js' => [
-                // 'group' => JS_DEFAULT,
-            // ],
-        // ],
-    // ];
     $libraries['sbadmin2.managed_file'] = [
         'title' => 'SBAdmin2 Managed file',
         'website' => 'https://github.com/ijortengab/drupal7-sbadmin2',
@@ -207,6 +200,16 @@ function sbadmin2_library() {
         'version' => '1.0.0',
         'js' => [
             $path.'/js/takeover/dependent.js' => ['group' => JS_DEFAULT],
+        ],
+    ];
+    $libraries['sbadmin2.views_collapsible_button'] = [
+        'title' => 'SBAdmin2 Views Collapsible Button',
+        'website' => 'https://github.com/ijortengab/drupal7-sbadmin2',
+        'version' => '1.0.0',
+        'js' => [
+            $path.'/js/views-collapsible-button.js' => [
+                'group' => JS_DEFAULT,
+            ],
         ],
     ];
     return $libraries;

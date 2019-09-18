@@ -50,6 +50,10 @@ function sbadmin2_preprocess_dropdown_menu(&$variables) {
     sbadmin2_utils::preprocess_theme_wrapper($variables, 'dropdown-menu');
 }
 
+function sbadmin2_preprocess_list_group(&$variables) {
+    sbadmin2_utils::preprocess_theme_wrapper($variables, 'list-group');
+}
+
 /**
  * Implements template_preprocess_HOOK().
  *
@@ -57,6 +61,10 @@ function sbadmin2_preprocess_dropdown_menu(&$variables) {
  * @see template_process()
  */
 function sbadmin2_preprocess_list_group_item(&$variables) {
+    $element = &$variables['element'];
+    if ($color = sbadmin2_utils::get_colorize($element, 'list-group')) {
+        $element['#attributes']['class'][] = 'list-group-item-' . $color;
+    }
     sbadmin2_utils::preprocess_theme_wrapper($variables, 'list-group-item');
 }
 
@@ -99,7 +107,9 @@ function sbadmin2_preprocess_button_wrapper(&$variables) {
     $element['#attributes']['type'] = isset($element['#attributes']['type']) ? $element['#attributes']['type']: 'submit';
     element_set_attributes($element, array('id', 'name', 'value'));
     $element['#attributes']['class'][] = 'btn';
-    $element['#attributes']['class'][] = 'btn-default';
+    $color = sbadmin2_utils::get_colorize($element);
+    ($color !== null) or $color = 'default';
+    $element['#attributes']['class'][] = 'btn-'.$color;
     if (!empty($element['#attributes']['disabled'])) {
         $element['#attributes']['class'][] = 'form-button-disabled';
     }
@@ -134,7 +144,10 @@ function sbadmin2_preprocess_label_button(&$variables) {
     $element = &$variables['element'];
     unset($element['#attributes']['name']);
     $element['#attributes']['class'][] = 'btn';
-    $element['#attributes']['class'][] = 'btn-' . sbadmin2_utils::get_colorize($element);
+
+    $color = sbadmin2_utils::get_colorize($element);
+    ($color !== null) or $color = 'default';
+    $element['#attributes']['class'][] = 'btn-' . $color;
     if ($size = sbadmin2_utils::get_size($element)) {
         $element['#attributes']['class'][] = 'btn-' . $size;
     }

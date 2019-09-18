@@ -55,6 +55,13 @@ function sbadmin2_form_views_exposed_form_alter(&$form, &$form_state) {
             // Akan digunakan oleh preprocess.
             // @see: sbadmin2_preprocess_views_exposed_form().
             $form['#sbadmin2_listgroup'] = true;
+            $form['submit'] = [
+                'submit' => $form['submit'],
+                // '#prefix' => '<div class="views-exposed-widget">',
+                // '#suffix' => '</div>',
+                '#theme_wrappers' => ['list_group_item'],
+                '#sbadmin2_colorize' => 'default',
+            ];
         }
     }
     foreach ($form['#info'] as $id => $info) {

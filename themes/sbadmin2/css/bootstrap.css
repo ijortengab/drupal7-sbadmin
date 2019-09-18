@@ -147,3 +147,23 @@ select.form-control.input-lg + .select2-container--bootstrap .select2-selection 
 .input-group-addon.tooltip-processed:nth-last-child(2):hover {
     border-left: 0;
 }
+
+/**
+ * Perbaikan jarak spasi antar element di Views Header dan Exposed Form.
+ * Baik dengan list group convert ataupun tidak.
+ */
+.view > .panel > .view-filters > .panel-body {
+    padding-bottom : 0;
+}
+.view > .panel > .view-filters + .view-header.panel-body {
+    padding-bottom : 0;
+}
+.view > .panel > .view-header.panel-body  + .view-header.panel-body {
+    padding-bottom : 0;
+}
+.view > .panel > .view-header .form-group:last-child {
+    margin-bottom:0;
+}
+.view > .panel > .view-header .form-group .help-block {
+    margin-bottom:0;
+}

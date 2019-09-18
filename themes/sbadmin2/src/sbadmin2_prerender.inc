@@ -200,6 +200,7 @@ class sbadmin2_prerender
                 sbadmin2_utils::remove_theme_wrappers('form_element', $element[$key]);
                 array_unshift($element[$key]['#theme_wrappers'], 'label_button');
                 $element[$key]['#sbadmin2_size'] = isset($element['#sbadmin2_size']) ? $element['#sbadmin2_size'] : null;
+                $element[$key]['#sbadmin2_colorize'] = isset($element['#sbadmin2_colorize']) ? $element['#sbadmin2_colorize'] : null;
             }
         }
     }

@@ -103,7 +103,7 @@ Drupal.sbadmin2ViewsMultipleSelect = function (a, container) {
         $(this.bulkToggle).show()
     }
     else {
-        $(this.bulkToggle).hide()
+        $(this.bulkToggle).css('display', 'none');
     }
     // Mainkan checklist pada input.
     this.modifyInputChecklist();

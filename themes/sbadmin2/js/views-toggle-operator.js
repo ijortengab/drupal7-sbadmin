@@ -12,8 +12,12 @@ Drupal.sbadmin2ViewsToggleOperator = function (a, container) {
     this.container = container
     this.a = a
     this.operator = $(container).find('.views-operator').parent()[0];
-    this.isHide = $(this.operator).is(':hidden');
+    // this.isHide = $(this.operator).is(':hidden');
+    // Otherwise hide. Use css rather than hide() because hide()
+    // does not work if the item is already hidden, for example,
+    // in a collapsed fieldset.
     // Class `.element-hidden` ini bikin rusak tampilan.
+    this.isHide = ($(this.operator).css('display') == 'none');
     // Meski efek hidden teroverride oleh `toggle()` tetap perlu di remove.
     if ($(this.operator).hasClass('element-hidden')) {
         $(this.operator).hide();
@@ -31,18 +35,15 @@ Drupal.sbadmin2ViewsToggleOperator = function (a, container) {
     this.key = window.location.pathname + '-is-views-operator-hidden-' + name;
     var isHide = window.localStorage.getItem(this.key);
     if (isHide == 0) {
-        $(this.operator).show(0, function () {
-            that.modifyChecklist()
-        });
+        $(this.operator).show(0);
     }
     else if (isHide == 1) {
-        $(this.operator).hide(0, function () {
-            that.modifyChecklist()
-        });
+        // Otherwise hide. Use css rather than hide() because hide()
+        // does not work if the item is already hidden, for example,
+        // in a collapsed fieldset.
+        $(this.operator).css('display', 'none');
     }
-    else {
-        this.modifyChecklist();
-    }
+    this.modifyChecklist();
 }
 
 Drupal.sbadmin2ViewsToggleOperator.prototype.save = function () {
@@ -51,7 +52,10 @@ Drupal.sbadmin2ViewsToggleOperator.prototype.save = function () {
 
 Drupal.sbadmin2ViewsToggleOperator.prototype.modifyChecklist = function () {
     var text = $(this.a).text();
-    if ($(this.operator).is(':hidden')) {
+    // Otherwise hide. Use css rather than hide() because hide()
+    // does not work if the item is already hidden, for example,
+    // in a collapsed fieldset.
+    if ($(this.operator).css('display') == 'none') {
         $(this.a).html(Drupal.theme('icon','square-o') + ' ' + text);
     }
     else {

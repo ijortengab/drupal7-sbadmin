@@ -258,43 +258,40 @@ function sbadmin2_helper_views_plugin_option_definition_alter(&$definition, $han
  */
 function sbadmin2_helper_form_views_ui_edit_display_form_alter(&$form, &$form_state) {
     $view = $form_state['view'];
-    switch ($form_state['section']) {
-        case 'style_options':
-            if ($view->display_handler->get_option('style_plugin') == 'table') {
-                $that = $form_state['view']->display[$form_state['display_id']];
-                $form['options']['style_options']['sbadmin2'] = [
-                    '#type' => 'fieldset',
-                    '#title' => t('SBAdmin2'),
-                    '#collapsible' => true,
-                    '#tree' => true,
-                ];
-                $form['options']['style_options']['sbadmin2']['datatables_convert'] = [
-                    '#type' => 'checkbox',
-                    '#title' => t('Convert to Datatables'),
-                    '#description' => t('This will convert to datatables.'),
-                    '#default_value' => isset($that->display_options['style_options']['sbadmin2']['datatables_convert']) ? $that->display_options['style_options']['sbadmin2']['datatables_convert'] : 0,
-                ];
-                $form['options']['style_options']['sbadmin2']['datatables_source'] = [
-                    '#type' => 'radios',
-                    '#title' => t('Data Source'),
-                    '#options' => ['html' => 'HTML (DOM)', 'js' => 'Javascript (JSON)'],
-                    '#description' => t('Data source to populate the table data. <a href="!link">Learn More.</a>', ['!link' => SBADMIN_HELPER_DATATABLES_REFERENCES_SOURCE]),
-                    '#default_value' => isset($that->display_options['style_options']['sbadmin2']['datatables_source']) ? $that->display_options['style_options']['sbadmin2']['datatables_source'] : 'html',
-                    '#states' => [
-                        'visible' => [
-                            ':input[name="style_options[sbadmin2][datatables_convert]"]' => ['checked' => true],
-                        ],
-                    ],
-                ];
-                $form['options']['style_options']['sbadmin2']['listgroup_convert'] = [
-                    '#type' => 'checkboxes',
-                    '#options' => ['header' => 'Header', 'footer' => 'Footer', 'exposed_form' => 'Exposed Form'],
-                    '#title' => t('Convert to List Group'),
-                    '#default_value' => isset($that->display_options['style_options']['sbadmin2']['listgroup_convert']) ? $that->display_options['style_options']['sbadmin2']['listgroup_convert'] : [],
-                    '#description' => t('Turn area field as item in list group. <a href="!link">Learn More.</a>', ['!link' => SBADMIN_HELPER_BOOTSTRAP_REFERENCES_LIST_GROUP]),
-                ];
-            }
-            break;
+    $section = $form_state['section'];
+    if ($section == 'style_options' && $view->display_handler->get_option('style_plugin') == 'table') {
+        $style_options = $view->display_handler->get_option('style_options');
+        $form['options']['style_options']['sbadmin2'] = [
+            '#type' => 'fieldset',
+            '#title' => t('SBAdmin2'),
+            '#collapsible' => true,
+            '#tree' => true,
+        ];
+        $form['options']['style_options']['sbadmin2']['datatables_convert'] = [
+            '#type' => 'checkbox',
+            '#title' => t('Convert to Datatables'),
+            '#description' => t('This will convert to datatables.'),
+            '#default_value' => isset($style_options['sbadmin2']['datatables_convert']) ? $style_options['sbadmin2']['datatables_convert'] : 0,
+        ];
+        $form['options']['style_options']['sbadmin2']['datatables_source'] = [
+            '#type' => 'radios',
+            '#title' => t('Data Source'),
+            '#options' => ['html' => 'HTML (DOM)', 'js' => 'Javascript (JSON)'],
+            '#description' => t('Data source to populate the table data. <a href="!link">Learn More.</a>', ['!link' => SBADMIN_HELPER_DATATABLES_REFERENCES_SOURCE]),
+            '#default_value' => isset($style_options['sbadmin2']['datatables_source']) ? $style_options['sbadmin2']['datatables_source'] : 'html',
+            '#states' => [
+                'visible' => [
+                    ':input[name="style_options[sbadmin2][datatables_convert]"]' => ['checked' => true],
+                ],
+            ],
+        ];
+        $form['options']['style_options']['sbadmin2']['listgroup_convert'] = [
+            '#type' => 'checkboxes',
+            '#options' => ['header' => 'Header', 'footer' => 'Footer', 'exposed_form' => 'Exposed Form'],
+            '#title' => t('Convert to List Group'),
+            '#default_value' => isset($style_options['sbadmin2']['listgroup_convert']) ? $style_options['sbadmin2']['listgroup_convert'] : [],
+            '#description' => t('Turn area field as item in list group. <a href="!link">Learn More.</a>', ['!link' => SBADMIN_HELPER_BOOTSTRAP_REFERENCES_LIST_GROUP]),
+        ];
     }
 }
 
@@ -302,12 +299,42 @@ function sbadmin2_helper_form_views_ui_edit_display_form_alter(&$form, &$form_st
  * Implements of hook_views_handler_option_definition_alter().
  */
 function sbadmin2_helper_views_handler_option_definition_alter(&$definition, $handler) {
+    if ($handler instanceof views_handler_area) {
+        $definition['sbadmin2'] = ['default' => []];
+    }
 }
 
 /**
  * Implements of hook_form_FORM_ID_alter().
  */
 function sbadmin2_helper_form_views_ui_config_item_form_alter(&$form, &$form_state) {
+    $view = $form_state['view'];
+    $section = $form_state['section'];
+    if ($section == 'header' && $view->display_handler->get_option('style_plugin') == 'table') {
+        $options = $form_state['handler']->options;
+        $form['options']['sbadmin2'] = [
+            '#type' => 'fieldset',
+            '#title' => t('SBAdmin2'),
+            '#collapsible' => true,
+            '#tree' => true,
+        ];
+        $form['options']['sbadmin2']['is_collapsible'] = [
+            '#type' => 'checkbox',
+            '#title' => t('Enable Collapsible'),
+            '#default_value' => isset($options['sbadmin2']['is_collapsible']) ? $options['sbadmin2']['is_collapsible'] : 0,
+        ];
+        $form['options']['sbadmin2']['collapsible_button_label'] = [
+            '#type' => 'textfield',
+            '#title' => t('Collapsible Button Label'),
+            '#default_value' => isset($options['sbadmin2']['collapsible_button_label']) ? $options['sbadmin2']['collapsible_button_label'] : '',
+            '#element_validate' => [
+                'sbadmin2_helper_element_validate_collapsible_button_label',
+            ],
+            '#dependency' => [
+                'edit-options-sbadmin2-is-collapsible' => [1]
+            ],
+        ];
+    }
 }
 
 /**
@@ -475,4 +502,18 @@ function sbadmin2_helper_preprocess_views_view_table(&$variables) {
         }
     }
     unset($view->row_index);
+}
+
+/**
+ * Element validate.
+ */
+function sbadmin2_helper_element_validate_collapsible_button_label($element, &$form_state) {
+    $parents = $element['#parents'];
+    array_pop($parents);
+    $sbadmin2 = drupal_array_get_nested_value($form_state['values'], $parents);
+    $is_collapsible = $sbadmin2['is_collapsible'];
+    $collapsible_button_label = $sbadmin2['collapsible_button_label'];
+    if ($is_collapsible && empty(trim($collapsible_button_label))) {
+        form_set_error('options][sbadmin2][collapsible_button_label', t('Please insert Collapsible Button Label.'));
+    }
 }

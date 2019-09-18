@@ -4,11 +4,13 @@ class sbadmin2_utils
 {
     const COLORIZE_DEFAULT = 'default';
 
-    const COLORIZE = ['primary', 'success', 'info', 'warning', 'danger'];
+    const COLORIZE = ['default', 'primary', 'success', 'info', 'warning', 'danger'];
 
-    const COLORIZE_LIST_GROUP = ['success', 'info', 'warning', 'danger'];
+    // Color `default` merupakan additional karena tidak ada di official
+    // Bootstrap 3.
+    const COLORIZE_LIST_GROUP = ['default', 'success', 'info', 'warning', 'danger'];
 
-    const SIZE = ['sm', 'info', 'warning', 'danger'];
+    const SIZE = ['sm', 'lg', 'xs'];
 
     const SIZE_INPUT = ['sm', 'lg'];
 
@@ -19,16 +21,18 @@ class sbadmin2_utils
     {
         switch ($context) {
             case 'list-group':
-                // @todo.
+                $matched = self::COLORIZE_LIST_GROUP;
                 break;
 
-            default:
-                if (isset($element['#sbadmin2_colorize']) && in_array($element['#sbadmin2_colorize'], self::COLORIZE)) {
-                    return $element['#sbadmin2_colorize'];
-                }
-                else {
-                    return self::COLORIZE_DEFAULT;
-                }
+            default: // button.
+                $matched = self::COLORIZE;
+                break;
+        }
+        if (isset($element['#sbadmin2_colorize']) && in_array($element['#sbadmin2_colorize'], $matched)) {
+            return $element['#sbadmin2_colorize'];
+        }
+        else {
+            return null;
         }
     }
 

@@ -28,7 +28,6 @@
  */
 ?>
 <div class="<?php print $classes; ?>">
-
   <?php print render($title_prefix); ?>
   <?php if ($title): ?>
     <?php print $title; ?>
@@ -36,25 +35,19 @@
   <?php print render($title_suffix); ?>
 
   <div class="panel panel-default">
-    <div class="panel-heading">
-<?php if ($exposed): ?>
-    <button aria-controls="collapseExample" aria-expanded="true" class="btn btn-xs btn-default" data-target="#views-filter-<?= $dom_id?>" data-toggle="collapse" type="button"> Filter </button>
-<?php endif; ?>
+<?php if ($collapsible_button): ?>
+    <div class="panel-heading views-collapsible-button">
+        <?php foreach ($collapsible_button as $button) :?>
+            <button aria-controls="collapseExample" aria-expanded="true" class="btn btn-xs btn-default" data-target="<?= $button['target']?>" data-toggle="collapse" type="button"> <?=$button['label'];?> </button>
+        <?php endforeach;?>
     </div>
-
-
+<?php endif; ?>
 
 <?php if ($exposed): ?>
-<div id="views-filter-<?= $dom_id?>" class="list-group view-filters collapse in">
+<div id="views-filter-<?= $views_name_hash?>" class="view-filters collapse<?=$sbadmin2_listgroup_class;?>">
     <?php print $exposed; ?>
 </div>
 <?php endif; ?>
-
-
-
-
-
-
 
 <?php if ($header): ?>
 <?php print $header; ?>
@@ -73,22 +66,13 @@
 <?php if ($footer): ?>
 <?php print $footer; ?>
 <?php endif; ?>
-
-
 </div>
-
-
-
-
-
 
   <?php if ($attachment_before): ?>
     <div class="attachment attachment-before">
       <?php print $attachment_before; ?>
     </div>
   <?php endif; ?>
-
-
 
   <?php if ($pager): ?>
     <?php print $pager; ?>
@@ -103,8 +87,6 @@
   <?php if ($more): ?>
     <?php print $more; ?>
   <?php endif; ?>
-
-
 
   <?php if ($feed_icon): ?>
     <div class="feed-icon">
