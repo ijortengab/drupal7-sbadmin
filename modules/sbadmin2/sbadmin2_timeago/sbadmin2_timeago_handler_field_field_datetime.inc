@@ -26,9 +26,8 @@ class sbadmin2_timeago_handler_field_field_datetime extends views_handler_field_
         $this->allow_advanced_render = true;
         $render = parent::advanced_render($values);
         $this->allow_advanced_render = false;
-        if (isset($this->options['sbadmin2']['rewrite'])
-         && isset($this->options['sbadmin2']['theme_selected'])
-         && $this->options['sbadmin2']['rewrite']
+        if (!empty($this->options['sbadmin2']['rewrite'])
+         && !empty($this->options['sbadmin2']['theme_selected'])
          && $this->options['sbadmin2']['theme_selected'] == 'timeago'
         ) {
             // Contoh result $get_value = [
@@ -41,7 +40,6 @@ class sbadmin2_timeago_handler_field_field_datetime extends views_handler_field_
                 return sbadmin2_timeago_return_array($date_time, strip_tags($render));
             }
             return '';
-
             // if (count($value) > 1) {
                 // @todo: Beri warning bahwa kita hanya support untuk satu value.
             // }

@@ -15,7 +15,17 @@ class sbadmin2_helper_handler_field_ctools_dropdown extends views_handler_field_
      */
     public function render_origin($values)
     {
-        return $this->minified_links($this->get_links());
+        // Hanya jika field options memang meminta rewrite javascript baru kita
+        // return value dalam bentuk array.
+        if (!empty($this->options['sbadmin2']['rewrite'])
+         && !empty($this->options['sbadmin2']['theme_selected'])
+         && $this->options['sbadmin2']['theme_selected'] == 'bootstrap_links'
+        ) {
+            return $this->minified_links($this->get_links());
+        }
+        else {
+            return parent::render($values);
+        }
     }
 
     /**
