@@ -93,6 +93,7 @@ function sbadmin2_form_views_exposed_form_alter(&$form, &$form_state) {
                                 'attributes' => [
                                     'class' => ['views-multiple-select'],
                                 ],
+                                'html' => false,
                             ],
                         ];
                         // Beritahu preprocess bahwa kita butuh element toggle.
@@ -169,6 +170,7 @@ function sbadmin2_form_views_exposed_form_alter(&$form, &$form_state) {
                     'attributes' => [
                         'class' => ['views-toggle-operator'],
                     ],
+                    'html' => false,
                 ],
             ];
             $element_value['#attached']['library'][] = ['sbadmin2','sbadmin2.views_toggle_operator'];
