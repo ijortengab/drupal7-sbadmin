@@ -16,6 +16,7 @@ include_once __DIR__ . '/overrides/menu_link.inc';
 include_once __DIR__ . '/overrides/menu_local_task.inc';
 include_once __DIR__ . '/overrides/menu_local_tasks.inc';
 include_once __DIR__ . '/overrides/page.inc';
+include_once __DIR__ . '/overrides/pager.inc';
 include_once __DIR__ . '/overrides/select.inc';
 include_once __DIR__ . '/overrides/table.inc';
 include_once __DIR__ . '/overrides/textfield.inc';
