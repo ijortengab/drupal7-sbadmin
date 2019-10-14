@@ -6,9 +6,24 @@ spl_autoload_register(function ($class_name) {
     }
 });
 
-include_once __DIR__ . '/override.inc';
-include_once __DIR__ . '/form_alter.inc';
-include_once __DIR__ . '/block_alter.inc';
+include_once __DIR__ . '/overrides/block.inc';
+include_once __DIR__ . '/overrides/button.inc';
+include_once __DIR__ . '/overrides/form_element.inc';
+include_once __DIR__ . '/overrides/form_element_label.inc';
+include_once __DIR__ . '/overrides/html.inc';
+include_once __DIR__ . '/overrides/link.inc';
+include_once __DIR__ . '/overrides/menu_link.inc';
+include_once __DIR__ . '/overrides/menu_local_task.inc';
+include_once __DIR__ . '/overrides/menu_local_tasks.inc';
+include_once __DIR__ . '/overrides/page.inc';
+include_once __DIR__ . '/overrides/select.inc';
+include_once __DIR__ . '/overrides/table.inc';
+include_once __DIR__ . '/overrides/textfield.inc';
+include_once __DIR__ . '/overrides/views_exposed_form.inc';
+include_once __DIR__ . '/overrides/views_view.inc';
+include_once __DIR__ . '/overrides/views_view_table.inc';
+include_once __DIR__ . '/alter/form.inc';
+include_once __DIR__ . '/alter/block.inc';
 
 /**
  * Clear any previously set element_info() static cache.
