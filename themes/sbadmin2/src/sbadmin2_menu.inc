@@ -82,18 +82,21 @@ class sbadmin2_menu
     protected static function modified_default_local_task(&$tree, $level = 1, &$parent = null)
     {
         sbadmin2_utils::replace_theme_wrappers('menu_tree__main_menu', 'menu_tree__main_menu__level_' . $level, $tree);
+        $router_item = menu_get_item();
         $childrens = element_children($tree);
         foreach ($childrens as $mlid) {
+            // Hapus class `active` yang muncul tidak konsisten pada parent.
+            // @see: menu_tree_output().
+            if ($tree[$mlid]['#original_link']['href'] == $router_item['tab_root_href'] && $tree[$mlid]['#original_link'] != $_GET['q']) {
+                if (isset($tree[$mlid]['#localized_options']['attributes']['class']) && in_array('active', $tree[$mlid]['#localized_options']['attributes']['class'])) {
+                    $key = array_search('active', $tree[$mlid]['#localized_options']['attributes']['class']);
+                    unset($tree[$mlid]['#localized_options']['attributes']['class'][$key]);
+                }
+            }
             if ($parent !== null && isset($tree[$mlid]['#original_link']['type']) && !($tree[$mlid]['#original_link']['type'] & MENU_VISIBLE_IN_TREE) && ($tree[$mlid]['#original_link']['type'] & MENU_LINKS_TO_PARENT)) {
                 $parent['#theme'] = 'menu_nolink';
                 $parent['#title'] .= ' <span class="fa arrow"></span>';
                 $parent['#localized_options']['html'] = true;
-                // Ganti li.active-trail menjadi li.active agar class .fa.arrow
-                // menyesuaikan arahnya menjadi kebawah.
-                if (in_array('active-trail', $parent['#attributes']['class'])) {
-                    $key = array_search('active', $parent['#attributes']['class']);
-                    $parent['#attributes']['class'][$key] = 'active';
-                }
             }
             self::modified_default_local_task($tree[$mlid]['#below'], $level + 1, $tree[$mlid]);
         }
