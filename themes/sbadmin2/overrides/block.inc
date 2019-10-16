@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Implements of hook_preprocess_HOOK(). 
+ * Implements of hook_preprocess_HOOK().
  *
  * Preprocess template `block.tpl.php`.
  *

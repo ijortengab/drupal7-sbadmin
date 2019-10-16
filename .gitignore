@@ -1,6 +1,14 @@
-themes/sbadmin2/vendor
-modules/sbadmin2/sbadmin2_library/vendor
+modules/sbadmin2/sbadmin2_library/themes/sbadmin2/vendor
 TODO.md
 ARCHIVES.txt
 # Doc dalam pengembangan.
 themes/sbadmin2/docs
+# vendor pada themes
+/themes/sbadmin2/vendor/timeago.js
+/themes/sbadmin2/vendor/metisMenu
+/themes/sbadmin2/vendor/select2
+/themes/sbadmin2/vendor/select2-bootstrap-theme
+/themes/sbadmin2/vendor/datatables
+/themes/sbadmin2/vendor/font-awesome
+/themes/sbadmin2/vendor/startbootstrap-sb-admin-2
+/themes/sbadmin2/vendor/twitter-bootstrap

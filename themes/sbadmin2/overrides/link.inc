@@ -1,8 +1,8 @@
 <?php
 
 /**
- * Implements hook_preprocess_HOOK(). 
- * 
+ * Implements hook_preprocess_HOOK().
+ *
  * Preprocess theme_link().
  */
 function sbadmin2_preprocess_link(&$variables) {

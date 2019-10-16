@@ -10,8 +10,10 @@ regions[content] = Content
 stylesheets[all][] = vendor/twitter-bootstrap/3.3.7/css/bootstrap.min.css
 stylesheets[all][] = vendor/font-awesome/4.7.0/css/font-awesome.min.css
 stylesheets[all][] = vendor/metisMenu/1.1.3/metisMenu.min.css
+stylesheets[all][] = vendor/tabdrop/css/tabdrop.css
 scripts[]          = vendor/twitter-bootstrap/3.3.7/js/bootstrap.min.js
 scripts[]          = vendor/metisMenu/1.1.3/metisMenu.min.js
+scripts[]          = vendor/tabdrop/js/bootstrap-tabdrop.js
 ; Library special bootstrap.
 stylesheets[all][] = vendor/startbootstrap-sb-admin-2/3.3.7+1/css/sb-admin-2.min.css
 ; SB Admin 2.
@@ -21,3 +23,4 @@ scripts[] = vendor/startbootstrap-sb-admin-2/3.3.7+1/js/sb-admin-2.min.js
 stylesheets[all][] = css/bootstrap.css
 stylesheets[all][] = css/override.css
 stylesheets[all][] = css/local.css
+scripts[]          = js/local.js

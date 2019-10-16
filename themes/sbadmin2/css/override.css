@@ -113,20 +113,6 @@ div.dataTables_wrapper div.dataTables_filter label {
     text-align:inherit;
 }
 /**
- * Untuk text yang overflow, meski di nowrap, tapi elipsis tetap menurun,
- * sehingga kita perlu buat agar elipsis tidak menurun, kemudian rapihkan
- * padding terkait.
- */
-.sidebar .arrow {
-    float: none;
-    position: absolute;
-    right: 0;
-    margin-right: 15px;
-}
-#side-menu.nav>li>a {
-    padding: 10px 25px 15px 15px;
-}
-/**
  * Logo dibuat fix tingginya.
  */
 a.logo img {
