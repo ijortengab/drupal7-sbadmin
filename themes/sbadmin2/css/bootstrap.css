@@ -2,7 +2,6 @@
  * Tambahan style untuk melengkapi yang kurang dari Bootstrap.
  * Override khusus terkait dengan CSS bootstrap.
  */
-
 /**
  * Menambah error color pada input group button.
  */
@@ -11,30 +10,26 @@
     background-color: #f2dede;
     border-color: #a94442;
 }
-
 /**
  * Main menu agar fix satu line.
  */
-#side-menu.nav>li>a {
+#side-menu.nav li>a {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
 }
-
 /**
  * Disabled jangan bikin user kaget.
  */
 .form-control[disabled], fieldset[disabled] .form-control {
     cursor: inherit;
 }
-
 /**
  * Form horizontal yang memiliki description margin bottom terlalu besar.
  */
 .form-horizontal .form-group .help-block{
     margin-bottom:0;
 }
-
 /**
  *
  */
@@ -45,7 +40,6 @@
     padding-right: 15px;
     padding-left: 15px;
 }
-
 /**
  *
  */
@@ -73,21 +67,18 @@
     border-bottom-right-radius: 0;
     margin-right: -1px;
 }
-
 /**
  *
  */
 .list-group-item-default {
     background-color: #f5f5f5;
 }
-
 /**
  * Paragraphs didalam list grup tidak perlu menambah panjang margin bottom.
  */
 .list-group-item p:last-child {
     margin-bottom:0;
 }
-
 /**
  * Jika style table dan header diconvert sebagai list group, maka
  * perlu perbaikan pada list posisi pertama yang double border.
@@ -95,14 +86,15 @@
 .list-group.view-header > .list-group-item:first-child {
     border-top:0px;
 }
-
+.list-group.view-filters .views-exposed-widgets> .list-group-item:last-child {
+    border-top:0px;
+}
 /**
  * Kebanyakan border bottom jadinya, jika 2px, karena sudah ditambah border-top.
  */
 .table>thead>tr>th {
     border-bottom: 1px solid #ddd;
 }
-
 /**
  * @see sbadmin2_preprocess_checkbox_label()
  */
@@ -122,7 +114,6 @@
     border-top-right-radius: 3px !important;
     border-bottom-right-radius: 3px !important;
 }
-
 /**
  * Select2 theme Bootstrap tidak terkena effect dari sizing form-control
  */
@@ -132,13 +123,11 @@ select.form-control.input-sm + .select2-container--bootstrap .select2-selection 
     line-height: 30px;
     padding: 0px 10px;
 }
-
 select.form-control.input-lg + .select2-container--bootstrap .select2-selection {
     min-height: auto;
     height: 46px;
     line-height: 46px;
 }
-
 /**
  * Input group addon yang berada pada posisi paling akhir harusnya mendapat
  * efek border-left: 0. Tooltip yang trigger saat hover, menyebabkan terdapat
@@ -147,7 +136,6 @@ select.form-control.input-lg + .select2-container--bootstrap .select2-selection 
 .input-group-addon.tooltip-processed:nth-last-child(2):hover {
     border-left: 0;
 }
-
 /**
  * Perbaikan jarak spasi antar element di Views Header dan Exposed Form.
  * Baik dengan list group convert ataupun tidak.

@@ -1,4 +1,7 @@
 /**
+ * Override Drupal Core maupun Contributed Module.
+ */
+/**
  * Module admin_menu tertutup oleh SbAdmin2.
  */
 #admin-menu, #admin-menu .dropdown {
@@ -35,43 +38,36 @@ li.expanded, li.collapsed, li.leaf {
     padding: 0;
     margin: 0;
 }
-
 /**
  * Agar baris table tidak ada zebra bawaan Drupal.
  */
 tr.even, tr.odd {
     background-color: transparent;
 }
-
 /**
  * todo, sementara
  */
 div.node div.content div.field-type-entityreference  div.field-item h2 {
     display:none;
 }
-
 div.field-type-entityreference div.field-items {
     margin-left:20px;
 }
 #block-system-main div.content > div.field{
     margin-bottom:10px;
 }
-
 /**
  * sementara, sampai solve.
  */
 .form-type-radio > input {
     margin-top:0;
-
 }
-
 /**
  * todo, perbaiki ini pada module select role.
  */
 #edit-role-selected {
     margin-top:15px;
 }
-
 /**
  * harusnya gunakan class, jangan override ini
  */
@@ -79,7 +75,6 @@ div.field-type-entityreference div.field-items {
     text-transform: uppercase;
     font-weight: bold;
 }
-
 /**
  * harusnya hide via form alter, title display none.
  */
@@ -96,7 +91,6 @@ a.tabledrag-handle .handle{
     height: 22px;
     width: 26px;
 }
-
 /**
  * Jika node view, maka input readonly tidak perlu background grey.
  */
@@ -111,7 +105,6 @@ a.tabledrag-handle .handle{
     margin-bottom: 0;
     padding: 0;
 }
-
 /**
  * Karena menggunakan css dataTables terbaru (1.10.19) alih-alih versi default
  * (1.10.12). Maka perlu override label kembali keasal.
@@ -119,7 +112,6 @@ a.tabledrag-handle .handle{
 div.dataTables_wrapper div.dataTables_filter label {
     text-align:inherit;
 }
-
 /**
  * Untuk text yang overflow, meski di nowrap, tapi elipsis tetap menurun,
  * sehingga kita perlu buat agar elipsis tidak menurun, kemudian rapihkan
@@ -134,14 +126,12 @@ div.dataTables_wrapper div.dataTables_filter label {
 #side-menu.nav>li>a {
     padding: 10px 25px 15px 15px;
 }
-
 /**
  * Logo dibuat fix tingginya.
  */
 a.logo img {
     height:29px;
 }
-
 /**
  * Views widget tidak perlu pake float jika listgroup.
  */
@@ -152,7 +142,6 @@ a.logo img {
 .list-group .views-exposed-form .views-exposed-widget .form-submit {
     margin-top: 0;
 }
-
 /**
  * Override .views-exposed-form label
  */
