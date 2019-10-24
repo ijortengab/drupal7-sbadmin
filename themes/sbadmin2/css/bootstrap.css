@@ -169,3 +169,34 @@ select.form-control.input-lg + .select2-container--bootstrap .select2-selection 
 .view > .panel > .view-header .form-group .help-block {
     margin-bottom:0;
 }
+/**
+ * Content area perlu kasih space dibawah biar enak dibaca.
+ */
+.block-system>.content {
+    padding-bottom:75px;
+}
+/**
+ * Terkait Custom Block.
+ */
+.block-block>.content ul,
+.block-block>.content ol {
+    margin-bottom: 10px;
+    padding-inline-start: 2em;
+}
+/**
+ * Perbaikan site name yang terlalu panjang pada device mobile.
+ */
+.navbar-brand.has_logo {
+    text-overflow: clip;
+    overflow: hidden;
+    white-space: nowrap;
+    top: 0;
+    position: absolute;
+    z-index: -1;
+    max-width: 192px;
+}
+@media (min-width: 768px) {
+    .navbar-brand.has_logo {
+        max-width: none;
+    }
+}

@@ -236,27 +236,31 @@ class sbadmin2_prerender
             // Description asli kita kembalikan ke tempat semula.
             // Sementara description tambahan karena validator, kita taro di
             // input group addon.
-            $_validator_description = theme('file_upload_help', array('description' => '', 'upload_validators' => $element['#upload_validators']));
-            $validator_description_position = strpos($element['#description'], $_validator_description);
-            $original_description = substr($element['#description'], 0, $validator_description_position);
-            empty($original_description) or $original_description = preg_replace('/<br \/>$/', '', $original_description);
-            $validator_description = substr($element['#description'], $validator_description_position);
+            $original_description = $element['#description'];
+            $validator_description = theme('file_upload_help', array('description' => '', 'upload_validators' => $element['#upload_validators']));
+            if (!empty($validator_description)) {
+                $position = strpos($element['#description'], $validator_description);
+                if ($position !== false) {
+                    $original_description = substr($element['#description'], 0, $position);
+                    empty($original_description) or $original_description = preg_replace('/<br \/>$/', '', $original_description);
+                    $validator_description = substr($element['#description'], $position);
+                }
+            }
             // New element.
+            $icon = empty($validator_description) ? 'file-o' : 'question-circle';
             $element['sbadmin2_info_sign'] = [
                 '#type' => 'icon',
-                '#icon' => 'question-circle',
+                '#icon' => $icon,
                 '#weight' => -15,
                 '#tooltip' => ['title' => $validator_description, 'placement' => 'auto left'],
             ];
             // Modify Wrapper.
             $element['#description'] = $original_description;
         }
-
         if (!empty($element['#value']['fid']) && isset($element['remove_button'])) {
             // Move.
             // $element['element_group']['button_group']['remove_button'] = $element['remove_button'];
             // $element['remove_button']['#printed'] = true;
-
             // New element.
             // $element['sbadmin2_info_text'] = [
                 // '#attributes' => ['readonly' => 'readonly', 'class' => ['form-control','sbadmin2-info-text']],
