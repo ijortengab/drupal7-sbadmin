@@ -189,14 +189,29 @@ select.form-control.input-lg + .select2-container--bootstrap .select2-selection 
 .navbar-brand.has_logo {
     text-overflow: clip;
     overflow: hidden;
-    white-space: nowrap;
     top: 0;
     position: absolute;
     z-index: -1;
-    max-width: 192px;
+}
+/**
+ * Dibuat agar posisi site title tidak terlalu jauh dengan logo.
+ */
+.navbar-brand.has_logo {
+    padding: 15px 65px 15px 10px;
 }
 @media (min-width: 768px) {
     .navbar-brand.has_logo {
-        max-width: none;
+        padding: 15px 10px 15px 10px;
+        max-width: 568px;
+    }
+}
+@media (min-width: 970px) {
+    .navbar-brand.has_logo {
+        max-width: 768px;
+    }
+}
+@media (min-width: 1170px) {
+    .navbar-brand.has_logo {
+        max-width: 970px;
     }
 }

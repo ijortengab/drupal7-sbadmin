@@ -17,12 +17,6 @@
     padding: 10px 0 8px 20px;
 }
 /**
- * Dibuat agar posisi site title tidak terlalu jauh dengan logo.
- */
-.navbar-brand.has_logo {
-    padding: 15px 15px 15px 10px;
-}
-/**
  * Block search yang ada di Drupal bukan merupakan <li>, sehingga agar
  * ada effect seperti li, tambahkan garis bawah.
  */
