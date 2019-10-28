@@ -101,17 +101,25 @@ class sbadmin2_utils
     /**
      *
      */
-    public static function remove_drupal_class(&$element)
+    public static function remove_class(&$element, $classes = [])
     {
         if (empty($element['#attributes']['class'])) {
             return;
         }
-        foreach (['first', 'last', 'leaf', 'active-trail', 'expanded'] as $class) {
+        foreach ($classes as $class) {
             if (in_array($class, $element['#attributes']['class'])) {
                 $key = array_search($class, $element['#attributes']['class']);
                 unset($element['#attributes']['class'][$key]);
             }
         }
+    }
+
+    /**
+     *
+     */
+    public static function remove_drupal_class(&$element)
+    {
+        return self::remove_class($element, ['first', 'last', 'leaf', 'active-trail', 'expanded']);
     }
 
     /**

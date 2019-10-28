@@ -172,7 +172,7 @@ select.form-control.input-lg + .select2-container--bootstrap .select2-selection 
 /**
  * Content area perlu kasih space dibawah biar enak dibaca.
  */
-.block-system>.content {
+#block-system-main>.content {
     padding-bottom:75px;
 }
 /**
@@ -214,4 +214,15 @@ select.form-control.input-lg + .select2-container--bootstrap .select2-selection 
     .navbar-brand.has_logo {
         max-width: 970px;
     }
+}
+/**
+ * Copy style dari `.nav-tabs>li.active>a` ke `.nav-tabs>li.tabdrop>a` agar
+ * user tahu bahwa halaman yang saat ini berada pada tab yang telah merge.
+ */
+.nav-tabs>li.tabdrop>a, .nav-tabs>li.tabdrop>a:focus, .nav-tabs>li.tabdrop>a:hover {
+    color: #555;
+    cursor: default;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-bottom-color: transparent;
 }
