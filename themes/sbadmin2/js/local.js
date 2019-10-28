@@ -26,7 +26,7 @@ var checkFinishingMetisMenu = setInterval(function() {
         // menge-click tautan link tersebut. Lihat pula function PHP
         // `sbadmin2_menu::modified_menu_tree()`.
         $element.find("li.menu-normal-item").has("ul").children("a").off("click.metisMenu");
-        $element.find("li.menu-normal-item").has("ul").children("ul").removeClass('collapse');
+        $element.find("li.menu-normal-item").has("ul").children("ul").removeClass('collapse in');
     }
 }, 100);
 })(jQuery);
