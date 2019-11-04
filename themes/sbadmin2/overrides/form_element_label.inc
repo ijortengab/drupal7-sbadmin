@@ -21,7 +21,7 @@ function sbadmin2_form_element_label($variables) {
   $attributes = array();
   if (isset($element['#sbadmin2_form_horizontal']) && $element['#sbadmin2_form_horizontal']) {
       $attributes['class']['control-label'] = 'control-label';
-      $attributes['class']['col-lg-2'] = 'col-lg-2';
+      $attributes['class']['col-sm-2'] = 'col-sm-2';
   }
   // Style the label as class option to display inline with the element.
   if ($element['#title_display'] == 'after') {
@@ -38,7 +38,7 @@ function sbadmin2_form_element_label($variables) {
   if ($element['#title_display'] == 'inside') {
     $title = $element['#children'] . $title;
     unset($attributes['class']['control-label']);
-    unset($attributes['class']['col-lg-2']);
+    unset($attributes['class']['col-sm-2']);
   }
 
   // The leading whitespace helps visually separate fields from inline labels.

@@ -68,7 +68,7 @@ function sbadmin2_form_element($variables) {
   switch ($element['#title_display']) {
     case 'before':
       $output .= ' ' . theme('form_element_label', $variables);
-      ($form_horizontal === false) or $output .= '<div class="col-lg-10">';
+      ($form_horizontal === false) or $output .= '<div class="col-sm-10">';
       $output .= ' ' . $prefix . $element['#children'] . $suffix . "\n";
       ($form_horizontal === false) or $output .= $description . '</div>';
       break;
@@ -79,7 +79,7 @@ function sbadmin2_form_element($variables) {
       break;
 
     case 'after':
-      ($form_horizontal === false) or $output .= '<div class="col-lg-10">';
+      ($form_horizontal === false) or $output .= '<div class="col-sm-10">';
       $output .= ' ' . $prefix . $element['#children'] . $suffix;
       ($form_horizontal === false) or $output .= $description . '</div>';
       $output .= ' ' . theme('form_element_label', $variables) . "\n";
@@ -92,7 +92,7 @@ function sbadmin2_form_element($variables) {
       break;
 
     case 'inside':
-        ($form_horizontal === false) or $output .= '<div class="col-lg-offset-2">';
+        ($form_horizontal === false) or $output .= '<div class="col-sm-offset-2">';
         $output .= ' ' . theme('form_element_label', $variables) . "\n";
         ($form_horizontal === false) or $output .= $description . '</div>';
         break;
